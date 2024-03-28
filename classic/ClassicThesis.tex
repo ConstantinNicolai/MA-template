@@ -1,0 +1,95 @@
+% *****************************************************************************
+% CSG specific modification of the ClassicThesis style by André Mide.
+% see https://ctan.org/pkg/classicthesis for more information on the original
+% template!
+%
+% License:
+% This program is free software; you can redistribute it and/or modify
+% it under the terms of the GNU General Public License as published by
+% the Free Software Foundation; either version 2 of the License, or
+% (at your option) any later version.
+%
+% This program is distributed in the hope that it will be useful,
+% but WITHOUT ANY WARRANTY; without even the implied warranty of
+% MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+% GNU General Public License for more details.
+%
+% You should have received a copy of the GNU General Public License
+% along with this program; see the file COPYING.  If not, write to
+% the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+% Boston, MA 02111-1307, USA.
+% *****************************************************************************
+\RequirePackage{silence} % :-\
+    \WarningFilter{scrreprt}{Usage of package `titlesec'}
+    %\WarningFilter{scrreprt}{Activating an ugly workaround}
+    \WarningFilter{titlesec}{Non standard sectioning command detected}
+\documentclass[ twoside,openright,titlepage,numbers=noenddot,%1headlines,
+                headinclude,footinclude,cleardoublepage=empty,abstract=on,
+                BCOR=5mm,paper=a4,fontsize=11pt,usenames,dvipsnames
+                ]{scrreprt}
+
+% *****************************************************************************
+% Note: Make all your adjustments in here
+% *****************************************************************************
+\input{classicthesis-config}
+
+% *****************************************************************************
+% Bibliographies
+% *****************************************************************************
+\addbibresource{Bibliography.bib}
+
+% *****************************************************************************
+% Contents
+% *****************************************************************************
+\begin{document}
+\frenchspacing
+\raggedbottom
+\selectlanguage{american} % american ngerman
+%\renewcommand*{\bibname}{new name}
+%\setbibpreamble{}
+\pagenumbering{roman}
+\pagestyle{plain}
+% *****************************************************************************
+% Frontmatter
+% *****************************************************************************
+% Choose appropriate Titlepage below if you choose the DACS version, also
+% comment line 92 - DeclarationTI
+\include{FrontBackmatter/TitlepageTI}
+% \include{FrontBackmatter/TitlepageDACS}
+% \include{FrontBackmatter/TitlepagePR}
+\cleardoublepage\include{FrontBackmatter/Abstract}
+% Comment line below to skip Acknowledgments
+\cleardoublepage\include{FrontBackmatter/Acknowledgments}
+\cleardoublepage\include{FrontBackmatter/Contents}
+% *****************************************************************************
+% Mainmatter
+% *****************************************************************************
+\cleardoublepage
+\pagestyle{scrheadings}
+\pagenumbering{arabic}
+% use \cleardoublepage here to avoid problems with pdfbookmark
+\include{Chapters/01-introduction}
+\cleardoublepage
+\include{Chapters/02-background}
+\cleardoublepage
+\include{Chapters/03-sota_and_rw}
+\cleardoublepage
+\include{Chapters/04-contribution1}
+\cleardoublepage
+\include{Chapters/05-contribution2}
+\cleardoublepage
+\include{Chapters/06-discussion}
+\cleardoublepage
+% *****************************************************************************
+% Backmatter
+% *****************************************************************************
+\appendix
+\renewcommand{\thechapter}{\alph{chapter}}
+\include{Chapters/A1-appendix}
+% *****************************************************************************
+% Other Stuff in the Back
+% *****************************************************************************
+\cleardoublepage\include{FrontBackmatter/Bibliography}
+\cleardoublepage\include{FrontBackmatter/DeclarationTI}
+\end{document}
+% *****************************************************************************
