@@ -97,5 +97,5 @@ arxiv: paper
 
 submission: arxiv clean
 	@echo -----Packing archive for submission-----
-	-rm -f ax/main.pdf
+	-rm -f ax/$(ARXIV_FILE).pdf
 	tar -C ax -cvvf ax.tar . 
