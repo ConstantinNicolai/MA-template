@@ -1,0 +1,20 @@
+\begin{tikzpicture}
+	\begin{axis}[
+			width=\figurewidth,
+			height=\figureheight,
+			xlabel={Time},
+			ylabel={Allocated Memory},
+			use units,
+			y unit=\si{\gibi\byte},
+			x unit=\si{\second},
+			grid=major,
+			legend style={
+			at={(0.5,1)},
+			anchor=south,
+			draw=none,
+			},
+		]
+		\addplot [WildStrawberry] table [x=cumtime,y=cummem] {Data/example.dat};
+		\addlegendentry{Traced Allocations}
+	\end{axis}
+\end{tikzpicture}

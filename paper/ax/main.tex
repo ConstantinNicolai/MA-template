@@ -1,0 +1,217 @@
+\documentclass{article}
+
+\usepackage{arxiv}
+
+\usepackage[utf8]{inputenc} \usepackage[T1]{fontenc}    \usepackage{hyperref}       \usepackage{url}            \usepackage{booktabs}       \usepackage{amsfonts}       \usepackage{nicefrac}       \usepackage{microtype}      \usepackage{cleveref}       \usepackage{lipsum}         \usepackage{graphicx}
+\usepackage[binary-units=true]{siunitx}
+\usepackage{doi}
+\PassOptionsToPackage{backend=biber,bibencoding=utf8, language=auto,style=numeric-comp,sorting=nyt, maxbibnames=10, natbib=true }{biblatex}
+\usepackage{biblatex}
+\begin{filecontents*}{PaperThesis.bbl}
+% $ biblatex auxiliary file $
+% $ biblatex bbl format version 3.3 $
+% Do not modify the above lines!
+%
+% This is an auxiliary file used by the 'biblatex' package.
+% This file may safely be deleted. It will be recreated by
+% biber as required.
+%
+\begingroup
+\makeatletter
+\@ifundefined{ver@biblatex.sty}
+  {\@latex@error
+     {Missing 'biblatex' package}
+     {The bibliography requires the 'biblatex' package.}
+      \aftergroup\endinput}
+  {}
+\endgroup
+
+
+\refsection{0}
+  \datalist[entry]{nyt/global//global/global/global}
+    \entry{bishopPatternRecognitionMachine2006}{book}{}{}
+      \name{author}{1}{}{%
+        {{hash=9dfd0135a5e80aa6d81cea2c10fb7f73}{%
+           family={Bishop},
+           familyi={B\bibinitperiod},
+           given={Christopher\bibnamedelima M.},
+           giveni={C\bibinitperiod\bibinitdelim M\bibinitperiod}}}%
+      }
+      \list{location}{1}{%
+        {New York}%
+      }
+      \list{publisher}{1}{%
+        {Springer}%
+      }
+      \strng{namehash}{9dfd0135a5e80aa6d81cea2c10fb7f73}
+      \strng{fullhash}{9dfd0135a5e80aa6d81cea2c10fb7f73}
+      \strng{fullhashraw}{9dfd0135a5e80aa6d81cea2c10fb7f73}
+      \strng{bibnamehash}{9dfd0135a5e80aa6d81cea2c10fb7f73}
+      \strng{authorbibnamehash}{9dfd0135a5e80aa6d81cea2c10fb7f73}
+      \strng{authornamehash}{9dfd0135a5e80aa6d81cea2c10fb7f73}
+      \strng{authorfullhash}{9dfd0135a5e80aa6d81cea2c10fb7f73}
+      \strng{authorfullhashraw}{9dfd0135a5e80aa6d81cea2c10fb7f73}
+      \field{sortinit}{B}
+      \field{sortinithash}{d7095fff47cda75ca2589920aae98399}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{isbn}{978-0-387-31073-2}
+      \field{langid}{english}
+      \field{pagetotal}{738}
+      \field{series}{Information Science and Statistics}
+      \field{title}{Pattern Recognition and Machine Learning}
+      \field{year}{2006}
+      \field{dateera}{ce}
+      \keyw{Machine learning,Pattern perception}
+    \endentry
+  \enddatalist
+\endrefsection
+\endinput
+
+
+\end{filecontents*}
+
+\usepackage{xpatch}
+
+%Patch the biblatex input command.
+%replace "testinput-bbl" if you change the name above.
+%disable if you want to run biblatex/biber normally
+\makeatletter
+\patchcmd\blx@bblinput{\blx@blxinit}
+                      {\blx@blxinit
+                       \def\jobname{PaperThesis}%new jobname
+                      }{}{\fail}
+\makeatother
+			     
+
+\title{\myPaperTitle}
+\newcommand{\myPaperTitle}{Your Paper Title Here}
+\newcommand{\myPaperShortTitle}{Your Paper Short Title Here}
+\newcommand{\myPaperSubject}{Your Subject(s) Here, e.g. cs.LG}
+\newcommand{\myPaperKeywords}{Your Keyword(s) Here, e.g. Pruning, Optimization}
+\newcommand{\myThesisTitle}{Your Classic Title Here}
+\newcommand{\myName}{Your Name Here}
+\newcommand{\myMatNr}{00000 }
+\newcommand{\myPlaceOfBirth}{City, Country}
+\newcommand{\myEmail}{Your Mail Here@stud.uni-heidelberg.de}
+\newcommand{\myProf}{Holger Fröning}
+\newcommand{\myProfsEmail}{holger.froening@ziti.uni-heidelberg.de}
+\newcommand{\mySupervisor}{Jon Doe}
+\newcommand{\mySupervisorsEmail}{Supervisor Email Here@ziti.uni-heidelberg.de}
+\newcommand{\myLocation}{Heidelberg}
+\newcommand{\myPaperSubmissionDate}{Day/Month/Year Here}
+\newcommand{\myThesisSubmissionDate}{Day/Month/Year Here}
+ 
+\date{\myPaperSubmissionDate}
+
+
+\newif\ifuniqueAffiliation
+\uniqueAffiliationtrue
+
+\author{ \href{https://orcid.org/0000-0000-0000-0000}{\includegraphics[scale=0.06]{orcid.pdf}\hspace{1mm}\myName}\thanks{Use footnote for providing further
+		information about author (webpage, alternative
+		address)---\emph{not} for acknowledging funding agencies.} \\
+	Institute of Computer Engineering\\
+	Heidelberg University\\
+	Heidelberg, Germany\\
+	\texttt{\myEmail} \\
+\And
+	\href{https://orcid.org/0000-0000-0000-0000}{\includegraphics[scale=0.06]{orcid.pdf}\hspace{1mm}\mySupervisor} \\
+	Institute of Computer Engineering\\
+	Heidelberg University\\
+	Heidelberg, Germany\\
+	\texttt{\mySupervisorsEmail} \\
+	\And
+	\href{https://orcid.org/0000-0000-0000-0000}{\includegraphics[scale=0.06]{orcid.pdf}\hspace{1mm}\myProf} \\
+	Institute of Computer Engineering\\
+	Heidelberg University\\
+	Heidelberg, Germany\\
+	\texttt{\myProfsEmail} \\
+}
+
+\renewcommand{\headeright}{}
+\renewcommand{\undertitle}{}
+\renewcommand{\shorttitle}{\myPaperShortTitle}
+
+\hypersetup{
+pdftitle={\myPaperTitle},
+pdfsubject={cs.LG},
+pdfauthor={\myName, \mySupervisor, \myProf},
+pdfkeywords={\myPaperKeywords},
+}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+	\lipsum[1]
+\end{abstract}
+
+
+\keywords{\myPaperKeywords}
+
+\section{Introduction and Motivation}\label{sec:introduction}
+
+Introduction to your topic and motivation of your work.
+Example citation \cite{bishopPatternRecognitionMachine2006} (good book!).
+
+\lipsum[2-4]
+
+\begin{figure}[t]
+	\centering
+	\includegraphics[height=0.3\textheight]{cat_cute}
+	\caption{An example Figure}\label{fig:example}
+\end{figure}
+
+\lipsum[5]
+ \section{Background}\label{sec:background}
+
+Explain relevant background information here.
+
+\lipsum[6-8]
+
+\begin{figure}
+	\centering
+	\includegraphics[width=\textwidth]{example}
+	\caption{An example Tikz plot, compiled externally and
+	included.}\label{fig:example}
+\end{figure}
+
+\lipsum[9-11]
+
+\begin{table}[t]
+	\centering
+	\caption{An Example table}\label{tab:example}
+	\begin{tabular}{ccc}
+	\toprule
+	Memory [\si{\mebi\byte}] & Time [\si{\second}] & Complexity \\
+	\midrule
+	40 & 10 & \(\infty\) \\
+	\bottomrule
+\end{tabular}
+ \end{table}
+ \section{State of the Art and Related Works}\label{sec:sota}
+
+Talk about related works and state of the art, plus possibly problems with
+SOTA that you are fixing.
+
+\lipsum[12-14]
+ \section{Methodology and Concept}\label{sec:methodology}
+
+Explain your contribution here.
+
+\lipsum[14-16]
+ \section{Experiments}\label{sec:experiments}
+
+Experimental setup and results here.
+
+\lipsum[16-18]
+ \section{Discussion and Outlook}\label{sec:discussion}
+
+Summary and discussion of the results and outlook/future work.
+
+\lipsum[18-20]
+ 
+\printbibliography
+
+\end{document}

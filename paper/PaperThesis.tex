@@ -1,0 +1,117 @@
+\documentclass{article}
+
+\usepackage{arxiv}
+
+\usepackage[utf8]{inputenc} % allow utf-8 input
+\usepackage[T1]{fontenc}    % use 8-bit T1 fonts
+\usepackage{hyperref}       % hyperlinks
+\usepackage{url}            % simple URL typesetting
+\usepackage{booktabs}       % professional-quality tables
+\usepackage{amsfonts}       % blackboard math symbols
+\usepackage{nicefrac}       % compact symbols for 1/2, etc.
+\usepackage{microtype}      % microtypography
+\usepackage{cleveref}       % smart cross-referencing
+\usepackage{lipsum}         % Can be removed after putting your text content
+\usepackage{graphicx}
+\usepackage[binary-units=true]{siunitx}
+\usepackage{doi}
+\PassOptionsToPackage{%
+	backend=biber,bibencoding=utf8, %instead of bibtex
+	% backend=bibtex8,bibencoding=ascii,%
+	language=auto,%
+	style=numeric-comp,%
+	%style=authoryear-comp, % Author 1999, 2010
+	%bibstyle=authoryear,dashed=false, % dashed: substitute rep. author with ---
+	sorting=nyt, % name, year, title
+	maxbibnames=10, % default: 3, et al.
+	%backref=true,%
+	natbib=true % natbib compatibility mode (\citep and \citet still work)
+}{biblatex}
+\usepackage{biblatex}
+\addbibresource{Bibliography.bib}
+
+\title{\myPaperTitle}
+\input{personal-config}
+
+% Here you can change the date presented in the paper title
+\date{\myPaperSubmissionDate}
+% Or remove it
+%\date{}
+
+\newif\ifuniqueAffiliation
+% Comment to use multiple affiliations variant of author block 
+\uniqueAffiliationtrue
+
+% If you don't have and ORCID simply remove the href, include of orcid.pdf and the hspace
+\author{ \href{https://orcid.org/0000-0000-0000-0000}{\includegraphics[scale=0.06]{orcid.pdf}\hspace{1mm}\myName}\thanks{Use footnote for providing further
+		information about author (webpage, alternative
+		address)---\emph{not} for acknowledging funding agencies.} \\
+	Institute of Computer Engineering\\
+	Heidelberg University\\
+	Heidelberg, Germany\\
+	\texttt{\myEmail} \\
+	%% examples of more authors
+	\And
+	\href{https://orcid.org/0000-0000-0000-0000}{\includegraphics[scale=0.06]{orcid.pdf}\hspace{1mm}\mySupervisor} \\
+	Institute of Computer Engineering\\
+	Heidelberg University\\
+	Heidelberg, Germany\\
+	\texttt{\mySupervisorsEmail} \\
+	\And
+	\href{https://orcid.org/0000-0000-0000-0000}{\includegraphics[scale=0.06]{orcid.pdf}\hspace{1mm}\myProf} \\
+	Institute of Computer Engineering\\
+	Heidelberg University\\
+	Heidelberg, Germany\\
+	\texttt{\myProfsEmail} \\
+	%% \AND
+	%% Coauthor \\
+	%% Affiliation \\
+	%% Address \\
+	%% \texttt{email} \\
+	%% \And
+	%% Coauthor \\
+	%% Affiliation \\
+	%% Address \\
+	%% \texttt{email} \\
+	%% \And
+	%% Coauthor \\
+	%% Affiliation \\
+	%% Address \\
+	%% \texttt{email} \\
+}
+
+\renewcommand{\headeright}{}
+\renewcommand{\undertitle}{}
+\renewcommand{\shorttitle}{\myPaperShortTitle}
+
+%%% Add PDF metadata to help others organize their library
+%%% Once the PDF is generated, you can check the metadata with
+%%% $ pdfinfo template.pdf
+\hypersetup{
+pdftitle={\myPaperTitle},
+pdfsubject={cs.LG},
+pdfauthor={\myName, \mySupervisor, \myProf},
+pdfkeywords={\myPaperKeywords},
+}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+	\lipsum[1]
+\end{abstract}
+
+
+% keywords can be removed
+\keywords{\myPaperKeywords}
+
+\input{PaperContents/01-introduction}
+\input{PaperContents/02-background}
+\input{PaperContents/03-sota_and_rw}
+\input{PaperContents/04-contribution1}
+\input{PaperContents/05-contribution2}
+\input{PaperContents/06-discussion}
+
+\printbibliography
+
+\end{document}

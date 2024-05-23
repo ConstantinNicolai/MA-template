@@ -1,0 +1,42 @@
+\documentclass[reprint, aps, prd, nofootinbib, dvipsnames]{revtex4-2}
+
+\usepackage{graphicx}% Include figure files
+\usepackage[pdfusetitle]{hyperref}% add hypertext capabilities
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+
+\usepackage{siunitx}
+\usepackage{tikz}
+\usetikzlibrary{trees, matrix, positioning, patterns, shapes, shadows, shapes.arrows, arrows.meta, shapes.multipart, decorations.pathreplacing, calc, tikzmark, shapes.geometric}
+
+\usepackage{pgfplots}
+\usepgfplotslibrary{fillbetween}
+\usepgfplotslibrary{groupplots}
+\usepgfplotslibrary{units}
+\usetikzlibrary{spy}
+\usetikzlibrary{plotmarks}
+
+\pgfplotsset{compat=newest}
+
+\usepackage{amsmath}	% Advanced maths commands
+\usepackage{amssymb}	% Extra maths symbols
+
+\usetikzlibrary{external}
+\tikzexternalize[optimize = false, prefix=TikzTmp/]
+
+\newlength\figurewidth
+\newlength\figureheight
+
+\newcommand{\MatVal}[1]{\bm{\mathit{#1}}}
+
+\begin{document}
+
+\begin{figure}
+  \centering
+  \tikzsetnextfilename{FIGURENAME}
+  \setlength\figurewidth{6.5in}
+  \setlength\figureheight{4.02in}
+  \input{Tikz/FIGURENAME.tex}%
+\end{figure}
+
+\end{document}
