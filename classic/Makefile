@@ -1,4 +1,4 @@
-TEX=pdflatex -shell-escape -synctex=1
+TEX=texfot pdflatex -shell-escape -synctex=1 -file-line-error
 BIB=biber
 GLS=makeglossaries
 PDFVIEWER=open
