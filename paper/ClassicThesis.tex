@@ -67,20 +67,21 @@
 \cleardoublepage
 \pagestyle{scrheadings}
 \pagenumbering{arabic}
+\renewcommand{\thechapter}{\alph{chapter}}
 % use \cleardoublepage here to avoid problems with pdfbookmark
 \chapter{Scientific Article}
 \includepdf[
-	pages=-
-	addtotoc={
-		1, section, 1, Introduction and Motivation, sec:introduction
+	pages=-,
+	addtotoc={%
+		1, section, 1, Introduction and Motivation, sec:paper:introduction,
+		2, section, 1, Background, sec:paper:background,
+		3, section, 1, State of the Art and Related Work, sec:paper:sota,
+		4, section, 1, Methodology and Concept, sec:paper:sota,
+		4, section, 1, Experiments, sec:paper:experiments,
+		5, section, 1, Discussion and Outlook, sec:paper:discussion
 	}
-]{PaperThesis}
+]{PaperThesis.pdf}
 \cleardoublepage
-% *****************************************************************************
-% Backmatter
-% *****************************************************************************
-\appendix
-\renewcommand{\thechapter}{\alph{chapter}}
 \include{ThesisAppendix/A1-background}
 \cleardoublepage
 \include{ThesisAppendix/A2-implementation}
