@@ -82,3 +82,23 @@ All `make` targets are shown below:
   [https://info.arxiv.org/help/submit_tex.html](https://info.arxiv.org/help/submit_tex.html).
   Once this is done make sure your paper compiles correctly by running
   `pdflatex` on `ax/main.tex` once and checking the output.
+
+# Table of Contents
+
+For the sections of your imported `PaperThesis.pdf` to show up in the
+`ClassicThesis`'s table of contents, there is some manual setup required. In
+line 73 of `ClassicThesis.tex` you can find the `\includepdf` command. This
+accepts a list of pagenumbers and section names that will then be added to your
+main ToC. Sadly these have to be added manually (at the moment). The format is
+as follows:
+
+```
+<pagenumber>, <type>, <level>, <name>, <label>,
+```
+
+Where `pagenumber` refers to the number in the `PaperThesis.pdf`, `type` refers
+to the LaTeX section type (e.g. section, subsection, ..., etc.), level also
+refers to the level of section (somehow redundantly) (e.g. 0 - chapter, 1 -
+section, 2 - subsection, ..., etc.), `name` is the section heading, and with
+`label` you can assign a LaTeX label to the imported section and thereby
+reference it in the text (of `ClassicThesis`).
