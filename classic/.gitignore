@@ -1,0 +1,9 @@
+# Ignore everything
+*
+
+# Un-ignore specific files or directories
+!.gitignore
+!ClassicThesis.tex
+!personal-config.tex
+!Chapters/
+!Tables/
