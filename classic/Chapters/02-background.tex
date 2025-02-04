@@ -1,6 +1,30 @@
 \chapter{Background}\label{chap:background}
 
-Explain relevant background information here.
+Sponner \\
+metrics: power consumption, latency, memory foorprint \\
+prediction method: ERT extremely randomized trees, with XGBoost \\
+framework: TVM, which I think allows the largest heterogenity of targets \\
+Only inference, since we cannot match this work in any other measure, we at least need to beat it here by also including training\\
+
+
+Ying Li: Path Beyond Simulators \\
+metrics: latency\\
+prediction method: Linear regression\\
+framework: Pytorch\\
+only inference\\
+killer feature: does not require the GPU for predictions\\
+
+Daniel Justus: Predicting the Computational \\
+metrics: latency\\
+prediction method: regularized MLP\\
+framework: Tensorflow\\
+inference and training \\
+
+
+Geoffrey X. Yu: A Runtime-Based ... Habitat \\
+metrics: latency\\
+predicion method: wave scaling and MLPs\\
+
 
 \section{Topic 1}
 First topic.
