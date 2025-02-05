@@ -1,7 +1,7 @@
 \chapter{Background}\label{chap:background}
 
 Sponner \\
-metrics: power consumption, latency, memory foorprint \\
+metrics: power consumption, latency, memory footprint \\
 prediction method: ERT extremely randomized trees, with XGBoost \\
 framework: TVM, which I think allows the largest heterogenity of targets \\
 Only inference, since we cannot match this work in any other measure, we at least need to beat it here by also including training\\
@@ -12,7 +12,8 @@ metrics: latency\\
 prediction method: Linear regression\\
 framework: Pytorch\\
 only inference\\
-killer feature: does not require the GPU for predictions\\
+Based on architectural properties, not benchmarks\\
+
 
 Daniel Justus: Predicting the Computational \\
 metrics: latency\\
@@ -24,13 +25,72 @@ inference and training \\
 Geoffrey X. Yu: A Runtime-Based ... Habitat \\
 metrics: latency\\
 predicion method: wave scaling and MLPs\\
+framework: Pytorch\\
+trainig\\
+killer feature: does not require the GPU for predictions\\
 
 
 \section{Topic 1}
-First topic.
+The challenge of predicting neural network performance has invited a plurality of approaches.
+Apart from the methodological approaches they also differ in a number of aspects.
+While execution time is commonly the metric of choice, only few go further and also study metrics
+like power consumption and memory footprint. Another important distinction is the workload studied
+in the work, more specifically, whether both training and inference are studied.
+For practical reasons it is also relevant which machine learning framework is used and what hardware
+targets are required and can be predicted for. These many dimensions of possibility result in no work
+covering all possibilities, but allows for many different approaches which have use cases in a given
+situation.\\
+There are also two fundamentally different philosophical approaches in this field. The first one has
+its origin in the hardware simulations. But the long simulation times make full simulations undesirable.
+Therefore one approach builds a performance model for DNNs using observations from a dataset of commonly
+used models. It uses linear regression in order to reflect the linear
+relationships observed between execution time and different properties of the
+neural network operations, such as input parameters, FLOPs and output parameters. While this work only
+allows predicting execution times for inference, due to its nature as a performance model based
+on hardware properties, it can be used for predictions of hardware targets outside its dataset and 
+even for GPUs which might not be available to the user or may not even exist yet. \\
+Another work called Habitat goes into a similar direction, in that it also utilizes hardware properties to 
+predict performance on a different GPU based on the data collected on a local GPU at runtime. The beauty
+of this lies in the fact that this allows it to be used with any kind of model, since it just relies on 
+runtime information. That makes it very appealing to researchers working on new or modified models.
+The prediction approach for Habitat is either a roofline model inspired scaling formula, called wave
+scaling, or an MLP based approach for operations which use different kernels based on their hardware
+target. \\
+The second approach is comes from the idea of simply benchmarking the performance, but tries to generalize,
+simplify and accelerate this process. In order to do that the modular and repetitive nature of neural
+networks is employed. Since they are made up of many small operations which only vary in a few key
+parameters and are repeated numerous times in the training process and even during inference, measuring
+these building blocks and using these results to find full model performance is the obvious approach.\\
+One work following this approach takes the step from the preceding works to replace the common linear
+regression with an MLP, trained on a subset of the many features of common DNN layers
+and their execution times. While this does include training time prediction, unfortunately it only
+focuses on the operation prediction and the combination into full model predictions, but fails to 
+present the dataset collection and methodology, which is very crucial part in this data driven approach.\\
+The last work to mention here is one that provides a great basis to start from for the measurement,
+rather then modeling approach side. It is built upon the TVM machine learning compiler, which provides
+great flexibility in the choice of hardware target, as it even employs target dependent automatic 
+optimizations. Using TVM-built in tools to profile execution time, power consumption and even memory
+footprint for supporting hardware targets, it has both a broad and solid basis for its dataset of 
+layer measurements. The actual prediction is performed using an ERT (extremely randomized tree) with XGBoosting.
+This leads to solid results on a wide variety of targets, the only major drawback is the lack of training 
+support, since the work focuses solely on inference.\\
+
 
 \subsection{Subsection}
-Details
+Kaufmann et al. take an approach of performance modeling by means of the computation graph. They are
+however limited to the Google Tensor Processing Unit in this work. \\
+Justus et al. take an approach exploiting the modular and repetitive nature of DNNs. Given the same operations
+are repeated over and over in training, often only varying in a few key paramters, these execution time for
+these base building blocks is measured. This is then done for one batch in the training process and
+generalized to the whole training process from there. There is however no presentation of the 
+methodology for the execution time measurements. \\
+Qi et al. present PALEO which employs an analytical approach towards predicting the execution for both
+training and inference of deep neural networks. The analytical approach brings both advantages and disadvantages
+with it. It does not require a dataset of measured execution times as a training set in the same way many 
+other works do, but on the other hand it also is based on more fixed assumptions about the DNN execution 
+than a more data driven approach. \\
+Wang et al. approach with a mult-layer regression model to predict execution time for training and inference.
+Their work is however rather limited in terms of hardware targets and different DNNs studied. \\
 
 \subsection{Other Subsection}
 Other details.
