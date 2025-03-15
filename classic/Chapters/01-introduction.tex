@@ -19,9 +19,9 @@ technologies. \\
 In this landscape it is more pressing than ever to gain
 insight into the roots of the energy costs in order to
 optimize future developments on an informed basis. \\
-In oder to facilitate a more informed pairing of workload 
+In order to facilitate a more informed pairing of workload 
 and GPU we introduce a framework to help guide the decision 
-towards an optimimal choice. This way regardless whether 
+towards an optimal choice. This way regardless whether 
 the fastest execution or the smallest energy footprint is 
 desired, the informed choice enabled by our framework
 prevents wasteful computation.
@@ -33,22 +33,67 @@ prevents wasteful computation.
 \section{Problem Statement}
 While a considerable amount of previous work has been done in
 profiling and prediction of neural network performance, no prior
-work covers the same cases and the same performance metrics.
-Therfore, our study investigates both training and inference cases 
+work covers the same cases and performance metrics targeted in this work.
+Therefore, our study investigates both training and inference cases 
 covering both execution time and power consumption. \\
 This contribution is valuable because in most cases where a new model
 architecture is designed or an existing architecture is adapted, 
 both the training and the inference efficiency are relevant at some
-point of the models lifespan. At the same time latency or power 
-envelope requirements may be fluent between the training and the
-inference stage, necessitating both performance metrics.
+point of the models lifespan. At the same time, latency or power 
+envelope requirements may be fluent between the training and
+inference stages, necessitating the study of both performance metrics.
 
-Introduction to your topic and motivation of your work.
-Example citation \cite{bishopPatternRecognitionMachine2006} (good book!).
-Table~\ref{tab:example} shows an example table and Figure~\ref{fig:example} an
-example plot.
 
-\input{Tables/example}
+\section{Scope}
+This can only be written, when research is finished.
 
-\input{Plots/example}
+
+\section{Summary of Contributions}
+\subsection{Dataset Collection and Postprocessing}
+In our first contribution we introduce our method for collecting 
+profiling data and creating a coherent dataset by processing the 
+collected data.\\
+The profiling measurement is executed via a python script, utilizing
+the Pytorch Benchmark 
+library\footnote{\url{https://pytorch.org/tutorials/recipes/recipes/benchmark.html}}
+to conduct the execution time measurements. The power measurements
+are conducted using the command-line tool 
+nvidia-smi\footnote{\url{https://docs.nvidia.com/deploy/nvidia-smi/index.html}}
+being run in the background while the benchmark is performed.\\
+In order to enable repeatability the execution times and power readings,
+along with their respective measurement errors are stored together with the
+Pytorch objects for profiled operations, along with a sensible selection of
+related metrics.
+
+\subsection{Prediction Method}
+In our second contribution we present our prediction model. Based on the predictions
+for the operations occurring in a neural network we can infer a prediction for the 
+complete network. We can therefore provide insight into which of the studied GPUs
+is most suitable for a given neural network, depending on the metric of interest.
+This way we can identify both the GPU which can execute the neural network in the
+fastest time, and the GPU which results in the smallest energy consumption and
+accompanying heat output.
+
+\subsection{Validation of Dataset Quality and Prediction Accuracy}
+In our third and final contribution we investigate the quality of our dataset of
+measurements for individual operations by comparing the sum of individual operations
+against a full neural network run for both execution time and energy consumption.\\
+In the second part of this contribution we assess the accuracy of our predictions
+both for individual operations as well as for full neural networks. Both for the
+individual operations as well as for the full neural networks this is achieved by
+comparing the predictions to measurements acquired using the same measurement
+methodology used to collect the initial dataset.
+
+
+
+
+
+% Introduction to your topic and motivation of your work.
+% Example citation \cite{bishopPatternRecognitionMachine2006} (good book!).
+% Table~\ref{tab:example} shows an example table and Figure~\ref{fig:example} an
+% example plot.
+
+% \input{Tables/example}
+
+% \input{Plots/example}
 
