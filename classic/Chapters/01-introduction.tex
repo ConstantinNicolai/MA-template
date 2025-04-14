@@ -1,4 +1,4 @@
-\chapter{Introduction and Motivation}\label{chap:introduction}
+\chapter{Introduction}\label{chap:introduction}
 
 \section{Motivation}
 
@@ -48,8 +48,8 @@ inference stages, necessitating the study of both performance metrics.
 This can only be written, when research is finished.
 
 
-\section{Summary of Contributions}
-\subsection{Dataset Collection and Postprocessing}
+\section{Contributions Overview}
+\subsection{Dataset Collection}
 In our first contribution we introduce our method for collecting 
 profiling data and creating a coherent dataset by processing the 
 collected data.\\
@@ -65,7 +65,7 @@ along with their respective measurement errors are stored together with the
 Pytorch objects for profiled operations, along with a sensible selection of
 related metrics.
 
-\subsection{Prediction Method}
+\subsection{Prediction Model}
 In our second contribution we present our prediction model. Based on the predictions
 for the operations occurring in a neural network we can infer a prediction for the 
 complete network. We can therefore provide insight into which of the studied GPUs
@@ -74,7 +74,7 @@ This way we can identify both the GPU which can execute the neural network in th
 fastest time, and the GPU which results in the smallest energy consumption and
 accompanying heat output.
 
-\subsection{Validation of Dataset Quality and Prediction Accuracy}
+\subsection{Validation}
 In our third and final contribution we investigate the quality of our dataset of
 measurements for individual operations by comparing the sum of individual operations
 against a full neural network run for both execution time and energy consumption.\\

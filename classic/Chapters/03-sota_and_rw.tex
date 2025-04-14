@@ -1,4 +1,63 @@
 \chapter{State of the Art and Related Works}\label{chap:sota}
 
-Talk about related works and state of the art, plus possibly problems with
-SOTA that you are fixing.
+% Talk about related works and state of the art, plus possibly problems with
+% SOTA that you are fixing.
+
+
+\section{State of the Art}
+The challenge of predicting neural network performance has invited a plurality of approaches.
+Apart from the methodological approaches they also differ in a number of aspects.
+While execution time is commonly the metric of choice, only few go further and also study metrics
+like power consumption and memory footprint. Another important distinction is the workload studied
+in the work, more specifically, whether both training and inference are studied.
+For practical reasons it is also relevant which machine learning framework is used and what hardware
+targets are required and can be predicted for. These many dimensions of possibility result in no work
+covering all possibilities, but allows for many different approaches which have use cases in a given
+situation.\\
+
+\section{Related Work}
+Kaufmann et al. take an approach of performance modeling by means of the computation graph. They are
+however limited to the Google Tensor Processing Unit in this work. \\
+Justus et al. take an approach exploiting the modular and repetitive nature of DNNs. Given the same operations
+are repeated over and over in training, often only varying in a few key paramters, these execution time for
+these base building blocks is measured. This is then done for one batch in the training process and
+generalized to the whole training process from there. There is however no presentation of the 
+methodology for the execution time measurements. \\
+Qi et al. present PALEO which employs an analytical approach towards predicting the execution for both
+training and inference of deep neural networks. The analytical approach brings both advantages and disadvantages
+with it. It does not require a dataset of measured execution times as a training set in the same way many 
+other works do, but on the other hand it also is based on more fixed assumptions about the DNN execution 
+than a more data driven approach. \\
+Wang et al. approach with a mult-layer regression model to predict execution time for training and inference.
+Their work is however rather limited in terms of hardware targets and different DNNs studied. \\
+Cai et al. focus their work, NeuralPower, on CNNs running on GPUs. For each target GPU, they collect
+a dataset and fit a sparse polynomial regression model to predict power, runtime, and energy consumption.
+While NeuralPower achieves good results, its usefulness has become limited due to its exclusive focus on 
+CNNs, as other DNN architectures have grown in popularity. \\
+Gianitti et al. also exploit the modular nature of DNNs in their approach. They define a complexity
+metric for each layer type, optionally including backpropagation terms, allowing them to predict
+execution times for both training and inference. However, their method faces significant limitations,
+as the complexity metric is only defined for a specific set of operations, making it incompatible with
+networks that include layers not covered in the original work. As a result, their approach is essentially
+limited to classic CNN architectures. \\
+Velasco-Montero et el. also take the familiar per-layer approach. Their predictions are based on linear
+regression models per type of layer, but again for a specific set of predefined operations. Given their 
+focus on low-cost vision devices these restrictions are reasonable, but limit generalizability. \\
+Sponner et al. take a broad approach in their work. It works in the TVM framework giving it high flexibility
+in target hardware and studied metrics. It is in fact the only work to include execution time, power
+consumption and memory allocation. Given the automated data colletion used to create the dataset basis
+for the predictions, there are also few limitations to the networks that can be studied with this. 
+The predictions are based on an extremely randomized tree (ERT) approach with XGBoosting applied. The 
+only major drawback for this work is its limitation to only study inference, due to TVMs limitation to inference. \\
+
+
+
+\section{Research Gap}
+With all these very different works no single one was able to cover all possible angles to interest,
+although Sponner et al. got rather close. But given the current landscape of available publications
+our work will focus on finding the best GPU for a PyTorch job. In order to achieve that, we will cover
+execution time, power and energy consumption and will provide inference and training predictions for these
+metrics. Our approach also employs a different method of automatic dataset collection, which allows
+for a broad field of study. In order to obtain power readings are collected directly through nvidia-smi.
+While due to the scope of this work this limits us to Nvidia GPUs, the methodology could just as well be 
+applied to any other hardware target which supports reporting power readings. \\
