@@ -14,31 +14,40 @@ This contribution outlines the method used to collect a profiling dataset. The  
 \section{Operations}
 
 
-In order to increase generality our approach exploits the layerwise structure of DNNs. This is achieved by working on the layer level rather than on the model level. In order to be rigorous we need to be clear on the terminology. The workload and its characteristics depend on the layer and its input features, just like it would in the model level on the DNN and the input dimensions. We are interested in most general objects with a the same characteristic workload. On the layer level those will be layers with specific input feature dimensions and layer settings. We will refer to these objects as operations. On the model level those will be DNNs with specific input image dimensions, which we will refer to as model-input sets. \\
-The units for which we will make predictions later are operations. For that reason we want to create a dataset of operations and profile the execution time and wattage. 
+In order to increase generality our approach exploits the layerwise structure of DNNs. This is achieved by working on the layer level rather than on the model level. In order to be rigorous we need to be clear on the terminology. The workload and its characteristics depend on the layer and its input features, just like it would on the model level on the DNN and the input dimensions. We are interested in most general objects with a the same characteristic workload. On the layer level those will be layers with specific input feature dimensions and layer settings. We will refer to these objects as operations. On the model level those will be DNNs with specific input image dimensions, which we will refer to as model-input sets. \\
+The units for which we will later make predictions are individual operations. To this end, we aim to collect a dataset of operations and profile the execution time and wattage for each one. To ensure that the dataset reflects operations encountered in real-world scenarios, we select a number of representative model-input sets from models of the Torchvision library. The set of operations we will be profling, is the set of all operations occuring in any of these model-input sets. \\
+Extracting this set is automated via scripts, but can just as well be done by hand if so desired. With this set at hand we can dive into the actual profiling.
 
 
 \section{Time Profiling}
 
-import torch.utils.benchmark as benchmark
+% import torch.utils.benchmark as benchmark
 
-timer = benchmark.Timer(
-    stmt="run_inference(operators, num_layers,required_iterations, ifmap)",  # Statement to benchmark  # Setup the function and variables
-    setup="from __main__ import run_inference",
-    globals={
-        "operators": operators,
-        "required_iterations": required_iterations,
-        "num_layers": num_layers,
-        "ifmap": ifmap
-    },
-    num_threads=1,  # Number of threads to use
-    label="Latency Measurement",
-    sub_label="torch.utils.benchmark"
-)
+% timer = benchmark.Timer(
+%     stmt="run_inference(operators, num_layers,required_iterations, ifmap)",  # Statement to benchmark  # Setup the function and variables
+%     setup="from __main__ import run_inference",
+%     globals={
+%         "operators": operators,
+%         "required_iterations": required_iterations,
+%         "num_layers": num_layers,
+%         "ifmap": ifmap
+%     },
+%     num_threads=1,  # Number of threads to use
+%     label="Latency Measurement",
+%     sub_label="torch.utils.benchmark"
+% )
 
-profile_result = timer.blocked_autorange(callback=None, min_run_time=rundur * runnr)
+% profile_result = timer.blocked_autorange(callback=None, min_run_time=rundur * runnr)
 
-A section.
+The time profiling is performed using the benchmark utility from torch.utils.benchmark called Timer. This enables us to run our benchmark function with the specific layer and input features as input parameters, allowing us to run it for each operation. \\
+To achieve more stable results and inprove the simultaneous power profiling it is desirable to run the benchmark for each operations for at least a few seconds. This is achieved by setting a minimum runtime for the benchmark to aggregate statistics. Different workload characteristics and different computational capabilities depending on the GPU configuration being profiled result in different requirements for individual profiling runs in order to ensure sufficient repitions in the measurement process. In order to accomodate this requirement, the runtime of the measurement is configurable via a command-line parameter. \\
+For the initialization of the operations we are going to benchmark we have to be careful to avoid to extreme cases in order to achieve a sensible approximation of the execution characteristics within a neural network. In the first case we initialize one instance of the operation and perform each benchmark loop on that instance. This will result in hitting the cash everytime and not be representative. On the other end of the spectrum of possibilities we have the case of initializing a new instance for each loop of the benchmark run, which adds the initializition overhead and the larger latency of having to access the GPU main memory every time, skewing our results in that direction. We have therefore chosen the middleground approach of initializing a sizable block of operation instances with random weights and biases, which is looped over by the benchmark kernel, resulting in some reuse of layers, stressing the memory system in a sensible manner. \\
+
+
+\subsection{Inference}
+The central difference between inference and training profiling appears in the design of the benchmark function. \\
+
+
 
 \section{Energy Profiling}
 
