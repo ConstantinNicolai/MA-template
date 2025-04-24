@@ -1,14 +1,42 @@
 \chapter{Dataset Collection}\label{chap:contrib1}
 
-This contribution serves to introduce the method used
-to collect a profiling dataset spanning a number of
-parameters which serves as the training set for the
-prediction model. The dataset spans operations from
-Torchvision models and input sizes, execution time 
-and power, inference and training case as well as
-different GPUs and various GPU clocks.
+% This contribution serves to introduce the method used
+% to collect a profiling dataset spanning a number of
+% parameters. This serves as a training set for the
+% prediction model. The dataset spans operations from
+% Torchvision models and input sizes, execution time 
+% and power, inference and training case as well as
+% different GPUs and various GPU clocks.
+
+This contribution outlines the method used to collect a profiling dataset. The  dataset serves as a training set for the prediction model. The parameters covered are various Torchvision models and input sizes, execution time and power, both the inference and the training case as well as different GPUs and various GPU clocks.
+
+
+\section{Operations}
+
+
+In order to increase generality our approach exploits the layerwise structure of DNNs. This is achieved by working on the layer level rather than on the model level. In order to be rigorous we need to be clear on the terminology. The workload and its characteristics depend on the layer and its input features, just like it would in the model level on the DNN and the input dimensions. We are interested in most general objects with a the same characteristic workload. On the layer level those will be layers with specific input feature dimensions and layer settings. We will refer to these objects as operations. On the model level those will be DNNs with specific input image dimensions, which we will refer to as model-input sets. \\
+The units for which we will make predictions later are operations. For that reason we want to create a dataset of operations and profile the execution time and wattage. 
+
 
 \section{Time Profiling}
+
+import torch.utils.benchmark as benchmark
+
+timer = benchmark.Timer(
+    stmt="run_inference(operators, num_layers,required_iterations, ifmap)",  # Statement to benchmark  # Setup the function and variables
+    setup="from __main__ import run_inference",
+    globals={
+        "operators": operators,
+        "required_iterations": required_iterations,
+        "num_layers": num_layers,
+        "ifmap": ifmap
+    },
+    num_threads=1,  # Number of threads to use
+    label="Latency Measurement",
+    sub_label="torch.utils.benchmark"
+)
+
+profile_result = timer.blocked_autorange(callback=None, min_run_time=rundur * runnr)
 
 A section.
 
