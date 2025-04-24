@@ -46,7 +46,10 @@ For the initialization of the operations we are going to benchmark we have to be
 
 \subsection{Inference}
 The central difference between inference and training profiling appears in the design of the benchmark function. \\
+For inference profiling we put our operations into \texttt{eval} mode and call the operations within a \texttt{torch.inference\_mode} environment, which is equivalent to the exection in a typical inference forward pass through a model. Within the loop we call the operator on a preinitialized random input tensor for the forward pass. The input tensor is a single instance, as it represents the activations from the previous layer which can be expected to live in high level memory in our memory hierarchy. Since this forward pass is everything we want to profile for inference, this benchmark loop is sufficient.
 
+\subsection{Training}
+    For the training profiling we put our operations into \texttt{train} mode and omit the environment used in the inference case. In order to portray the training process for a single operation, we basically simply need to run a forward pass and a backward pass. The forward pass is handled identically. In order to execute the backward pass we need a substitute for the gradients flowing backward trough the model. This is achieved by preinitializing a random torch vector with the dimensions of our operation's output which we can call the backward pass on. Other than that we only have to make sure to have keep our gradients for the operation instances and the input vector reset and can proceed.
 
 
 \section{Energy Profiling}
