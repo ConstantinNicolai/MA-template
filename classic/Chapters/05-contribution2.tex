@@ -1,3 +1,14 @@
 \chapter{Second Contribution}\label{chap:contrib2}
 
-The second contribution goes here.
+In this chapter we will introduce our model for providing predictions based on the collected dataset. We will go into the idea and decisions in creating it in this specific way and provide insight into the implementation.
+
+
+\section{Model Selection}
+Since we are interested in time and energy, we need two prediction models. More precicely, we need one for runtime predictions and one for power predictions. Multiplying the two predictions we obtain the our predicted energy. \\
+In order to retain as much understanding of the prediction process as we can while ensuring tolerable execution times for the predicion times, we do not want to use a full DNN to perform the predictions. Instead we are looking for a more lightweight solution, closer to classical statisics. These requirements led us to using a random forest predictor model. It is both lightweight and sets restrictions to its input which force us to format our dataset in a way that provides some insight into cause and effect for the predictions. \\
+From the same family of tree based ensemble methods, we also ran some tests with Extremely Randomized Trees, but the increased randomness did not yield better results. We therefore continued with the less complex random forest. A similar attempt was made with Extreme Gradient Boosting, but this also did not provide and increase in prediction accuracy justifying the increased trainging time. While we did not observe any reason to use on of these methods, we do not want to dissuade others from doing so. Switching around between the methods is relatively simple, due to the provided implementations from sci-py, and the fact, that we did not find improvements using them on our dataset does not necessarily have to mean there are no benefits when studying a different dataset.
+
+
+
+\Selection{Prediction Architecture}
+As we are using the sci-py implementation of the random forest model, we did not have to create architecture. Instead most work went into formatting and preprocessing the dataset. In order to give the model as much useful input information as possible we needed to provide the operator name, the input size and all potentially useful attributes of the operation's pytorch object to the predictor. 

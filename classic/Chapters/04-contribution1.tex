@@ -44,10 +44,10 @@ Since we are assuming the number of benchmark iterations and the resulting total
 % \input{Plots/startup.tex}
 
 The energy profiling is conducted by measuring the power in watts. Combined with the time measurements this gives us the energy results. \\
-We are starting \texttt{nvidia-smi} as a background process and logging the power readings into a temporary csv file, which is evaluated later in the script to extract the statistics relevant to our purpose. On a higher level abstraction, a second instance of \texttt{nvidia-smi} runs during the complete benchmark process. This log can be compared to the timestamps included in the dataset of profiled operations, in order to investigate surprising annomalies in the results. However, the results relevent to our power profiling are calculated instanly from operation specific temporary log file. In terms of direct measurement there is no additional complexity involved for the power profiling. Still, some preparation and processing after the fact is necessary to ensure robust results. \\
-As can be seen in Figure ?, showing the power measurement over time for alternating idle times and benchmark calls, the transition is not instant. There are some power readings in between the steady states of idle and benchmark. \\
-In order to illustrate the existance of a startup effect without idle times between the benchmark runs, Figure ? shows five looped benchmark runs of the same benchmark overlayed. For each run we can observe the startup effect. \\
-We do not want to keep this startup effect in our result, because it is a result of our benchmark exection and not representative of the much more integrated execution pipeline in a neural network.\\
+We are starting \texttt{nvidia-smi} as a background process and logging the power readings into a temporary csv file, which is evaluated later in the script to extract the statistics relevant to our purpose. On a higher level abstraction, a second instance of \texttt{nvidia-smi} runs during the complete benchmark process. This log can be compared to the timestamps included in the dataset of profiled operations, in order to investigate surprising annomalies in the results. However, the results relevent to our power profiling are calculated instanly from the temporary csv log file. Due to the nature of our meausrement pipeline, some preparations and processing after the fact are necessary to ensure robust results. \\
+As can be seen in Figure \ref{fid:startup1}, showing the power measurement over time for alternating idle times and benchmark calls, the transition is not instant. There are some power readings in between the steady states of idle and benchmark. \\
+In order to illustrate the existance of a startup effect without idle times between the benchmark runs, Figure \ref{startup2} shows five looped benchmark runs of the same benchmark overlayed. For each run we can observe the startup effect. \\
+We do not want to keep this startup effect in our result, because it is a result of our benchmark execution and not representative of the much more integrated execution pipeline in a neural network.\\
 In order to keep it from affecting our results, we use a $3\sigma$ channel around the initial mean of the power readings and drop everything else. \\
 As a second precaution, the script also employs some warmup runs in order to further mimimize the impact of the startup effect.\\
 
@@ -55,7 +55,7 @@ As a second precaution, the script also employs some warmup runs in order to fur
 \section{Log file Evaluation}
 
 
-The following section explains how we arrive at our results using the log files collected in the benchmark run. Below you can see a snippet from one of the log files. The fourth entry in each row is the power.
+The following section explains the details of how we arrive at our results from log files collected in the benchmark runs. Below you can see a snippet from one of the log files. The fourth entry in each row is the power reading.
 
 % \begin{small} % Change to \footnotesize or \scriptsize for even smaller text
 \begin{verbatim}
@@ -69,7 +69,7 @@ The following section explains how we arrive at our results using the log files 
 \end{verbatim}
 % \end{small}
 
-We begin with the power evaluation. The log file is read in via \texttt{pandas}\footnote{\href{https://pandas.pydata.org/}{pandas}}. Any existing rows containing a non-numerical value are dropped from the dataframe. We then find the standard deviation for the power and drop all rows containing a power reading outside a $3 \: \sigma $ range. The following formulae are used:
+Let us begin with the power evaluation. The log file is read in via \texttt{pandas}\footnote{\href{https://pandas.pydata.org/}{pandas}}. Any existing rows containing a non-numerical value are dropped from the dataframe. We then find the standard deviation for the power and drop all rows containing a power reading outside a $3 \: \sigma $ range. The following formulae are used:
 
 \begin{equation}
 \overline{W} = \frac{1}{n} \sum_{i=1}^{n} W_i
@@ -114,8 +114,10 @@ e = \frac{E_{tot}}{N}
 \sigma_e = \frac{\sigma_{E_{tot}}}{N}
 \end{equation}
 
+The most interesting results here are of course the time and enery per iteration with their respective errors, as well as the average power, all specific to the tested opeation of course.
 
 % 3 sigma cutoff
 % warmup runs, also applying to time measurement of course
 
 \section{GPU Clocks}
+The last parameter we needed to build a test methodology for is the GPU clock. More precisely the core clock of the GPU. Because using \texttt{nvidia-smi} to change the clock requires lower level permissions, this was done in a seperate script with different permissions, which was then called from the \texttt{sbatch} script used to run the benchmark. This clocking script takes command line parameters to set the desired clock speed. A range of clock speeds was tested in order to gain insight into the relationship between clock speed, runtime and energy consumption. These clock speeds were simply set manually in the \texttt{sbatch} script. 
