@@ -8,14 +8,14 @@
 % and power, inference and training case as well as
 % different GPUs and various GPU clocks.
 
-This contribution outlines the method used to collect a profiling dataset. The  dataset serves as a training set for the prediction model. The parameters covered are various Torchvision models and input sizes, execution time and power, both the inference and the training case as well as different GPUs and various GPU clocks.
+This contribution outlines the method used to collect a profiling dataset. The  dataset serves as a training set for the prediction model. The parameters covered are various Torchvision models and input sizes, execution time and power, both the inference and the training case as well as multiple GPUs and various GPU clocks.
 
 
 \section{Operations}
 
 
-In order to increase generality our approach exploits the layerwise structure of DNNs. This is achieved by working on the layer level rather than on the model level. In order to be rigorous we need to be clear on the terminology. The workload and its characteristics depend on the layer and its input features, just like it would on the DNN and the input dimensions on the model level. We are interested in most general objects with an identical characteristic workload. On the layer level those will be layers with specific input feature dimensions and layer settings. We will refer to these objects as operations. On the model level those will be DNNs with specific input image dimensions, which we will refer to as model-input sets. \\
-The units for which we will make predictions later are individual operations. To this end, we aim to collect a dataset of operations and profile the execution time and wattage for each one. To ensure that the dataset reflects operations encountered in real-world scenarios, we select a number of representative model-input sets from models of the Torchvision library. The set of operations which we will be profling, is the set of all operations occuring in any of these model-input sets. \\
+In order to increase generality our approach exploits the layerwise structure of DNNs. This is achieved by working on the layer level rather than on the model level. In order to be rigorous we need to be clear on the terminology. The workload and its characteristics depend on the layer and its input features, just like it would on the DNN and the input dimensions on the model level. We are interested in the most general objects which have an identical characteristic workload. On the layer level those will be layers with specific input feature dimensions and layer settings. We will refer to these objects as operations. On the model level those will be DNNs with specific input image dimensions, which we will refer to as model-input sets. \\
+The units for which we will make predictions later are individual operations. To this end, we aim to collect a dataset of operations and profile the execution time and power for each one. To ensure that the dataset reflects operations encountered in real-world scenarios, we select a number of representative model-input sets from models of the Torchvision library. The set of operations which we will be profling, is the set of all operations occuring in any of these model-input sets. \\
 Extracting this set is automated via scripts, but can just as well be done by hand if so desired. With this set at hand we can dive into the actual profiling.
 
 
@@ -24,8 +24,8 @@ Extracting this set is automated via scripts, but can just as well be done by ha
 \input{Plots/runtime.tex}
 
 The time profiling is performed using the benchmark utility from \texttt{torch.utils.benchmark} called Timer. This enables us to run our benchmark function with the specific layer and input features as input parameters, allowing us to run it for each operation. \\
-To achieve more stable results and inprove the simultaneous power profiling it is desirable to run the benchmark for each operations for at least a few seconds. This is achieved by setting a minimum runtime for the benchmark to aggregate statistics. Different workload characteristics and different computational capabilities depending on the GPU configuration being profiled result in different requirements for individual profiling runs in order to ensure sufficient repitions in the measurement process. In order to accomodate this requirement, the runtime of the measurement is configurable via a command-line parameter. \\
-For the initialization of the operations we have to be careful to avoid two extreme cases in order to achieve a sensible approximation of the execution characteristics within a neural network. The first case we want to avoid is initializing one instance of the operation and performing each benchmark loop on that instance. This would result in hitting the cash every time and would not be representative. The second extreme we want to avoid is initializing a new instance for each loop of the benchmark run, which adds the initializition overhead and the larger latency of having to access the GPU main memory every time, skewing our results in the opposite direction. We have therefore chosen the middleground approach of initializing a sizable block of operation instances with random weights and biases, which is then looped over by the benchmark kernel, resulting in some reuse of layers, stressing the memory system in a sensible manner. \\
+To achieve more stable results and inprove the simultaneous power profiling it is desirable to run the benchmark for each operation for at least a few seconds. This is achieved by setting a minimum runtime for the benchmark to aggregate statistics. Different workload characteristics and different computational capabilities depending on the GPU configuration being profiled result in different requirements for individual profiling runs in order to ensure sufficient repitions in the measurement process. In order to accomodate this requirement, the runtime of the measurement is configurable via a command-line parameters. \\
+For the initialization of the operations we have to be careful to avoid two extreme cases in order to achieve a sensible approximation of the execution characteristics within a neural network. The first case we want to avoid is initializing one instance of the operation and performing each benchmark loop on that instance. This would result in hitting the cash every time and would not be representative. The second extreme we want to avoid is initializing a new instance for each loop of the benchmark run, which adds the initializition overhead and the larger latency of having to access the GPU main memory every time, skewing our results in the opposite direction. We have therefore chosen the middleground approach of initializing a sizable block of operation instances with random weights and biases, which are then looped over by the benchmark kernel, resulting in some reuse of layers, stressing the memory system in a sensible manner. \\
 
 
 \subsection{Inference}
@@ -41,21 +41,21 @@ Since we are assuming the number of benchmark iterations and the resulting total
 
 \section{Energy Profiling}
 
-% \input{Plots/startup.tex}
+\input{Plots/startup.tex}
 
 The energy profiling is conducted by measuring the power in watts. Combined with the time measurements this gives us the energy results. \\
-We are starting \texttt{nvidia-smi} as a background process and logging the power readings into a temporary csv file, which is evaluated later in the script to extract the statistics relevant to our purpose. On a higher level abstraction, a second instance of \texttt{nvidia-smi} runs during the complete benchmark process. This log can be compared to the timestamps included in the dataset of profiled operations, in order to investigate surprising annomalies in the results. However, the results relevent to our power profiling are calculated instanly from the temporary csv log file. Due to the nature of our meausrement pipeline, some preparations and processing after the fact are necessary to ensure robust results. \\
-As can be seen in Figure \ref{fid:startup1}, showing the power measurement over time for alternating idle times and benchmark calls, the transition is not instant. There are some power readings in between the steady states of idle and benchmark. \\
-In order to illustrate the existance of a startup effect without idle times between the benchmark runs, Figure \ref{startup2} shows five looped benchmark runs of the same benchmark overlayed. For each run we can observe the startup effect. \\
+We are starting \texttt{nvidia-smi} as a background process and logging the power readings into a temporary csv file, which is evaluated later in the script to extract the statistics relevant to our purpose. On a higher level abstraction, a second instance of \texttt{nvidia-smi} runs during the complete benchmark process. This log can be compared to the timestamps included in the dataset of profiled operations, in order to investigate surprising annomalies in the results. However, the results relevent to our power profiling are calculated instanly from the temporary csv log file. Due to the nature of our measurement pipeline, some preparations and processing after the fact are necessary to ensure robust results. \\
+As can be seen in Figure \ref{fig:startup1}, showing the power measurement over time for alternating idle times and benchmark calls, the transition is not instant. There are some power readings in between the steady states of idle and benchmark. \\
+In order to illustrate the existance of a startup effect without idle times between the benchmark runs, Figure \ref{fig:startup2} shows five looped benchmark runs of the same benchmark overlayed. For each run we can observe the startup effect. \\
 We do not want to keep this startup effect in our result, because it is a result of our benchmark execution and not representative of the much more integrated execution pipeline in a neural network.\\
 In order to keep it from affecting our results, we use a $3\sigma$ channel around the initial mean of the power readings and drop everything else. \\
 As a second precaution, the script also employs some warmup runs in order to further mimimize the impact of the startup effect.\\
 
 
-\section{Log file Evaluation}
+\section{Profiling Evaluation}
 
 
-The following section explains the details of how we arrive at our results from log files collected in the benchmark runs. Below you can see a snippet from one of the log files. The fourth entry in each row is the power reading.
+The following section explains the details of how we arrive at our results from log files collected in the benchmark runs. Below you can see a snippet from one of the log files. The third entry in each row is the power reading.
 
 % \begin{small} % Change to \footnotesize or \scriptsize for even smaller text
 \begin{verbatim}
@@ -85,8 +85,8 @@ W_{filtered} = W \; \text{such that} \, |W - \overline{W}| < 3 \sigma_W
     
 With \( n \) being the number of timestamps and \( W \) being the power. \\
 The same two formulae are used to find the mean power \( \overline{W}_{filtered} \) and standard deviation \( \sigma_{\overline{W}_{filtered}} \) of the filtered power. \\
-Both the total runtime \(t_{tot}\) and its standard deviation \(\sigma_{t_{tot}} \) are provided by \texttt{torch.utils.benchmark}.
-With power and time evaluated, we find the total run energy \( E_{tot} \) and its error \( \sigma_{E_{tot}} \).
+Both the total runtime \(t_{tot}\) and its standard deviation \(\sigma_{t_{tot}} \) are provided by \texttt{torch.utils.benchmark}.\\
+In the next step we find the total run energy \( E_{tot} \) and its error \( \sigma_{E_{tot}} \).
 
 \begin{equation}
 E_{tot} = \overline{W}_{filtered} \cdot t_{tot}
@@ -114,10 +114,10 @@ e = \frac{E_{tot}}{N}
 \sigma_e = \frac{\sigma_{E_{tot}}}{N}
 \end{equation}
 
-The most interesting results here are of course the time and enery per iteration with their respective errors, as well as the average power, all specific to the tested opeation of course.
+The most interesting results here are the time and enery per iteration with their respective errors, as well as the average power.
 
 % 3 sigma cutoff
 % warmup runs, also applying to time measurement of course
 
 \section{GPU Clocks}
-The last parameter we needed to build a test methodology for is the GPU clock. More precisely the core clock of the GPU. Because using \texttt{nvidia-smi} to change the clock requires lower level permissions, this was done in a seperate script with different permissions, which was then called from the \texttt{sbatch} script used to run the benchmark. This clocking script takes command line parameters to set the desired clock speed. A range of clock speeds was tested in order to gain insight into the relationship between clock speed, runtime and energy consumption. These clock speeds were simply set manually in the \texttt{sbatch} script. 
+The last parameter we needed to build a test methodology for is the GPU clock. More precisely the core clock of the GPU. Because using \texttt{nvidia-smi} to change the clock requires lower level permissions, this was done in a seperate script with additional permissions, which was then called from the \texttt{sbatch} script used to run the benchmark. This clocking script takes command line parameters to set the desired clock speed. A range of clock speeds was tested in order to gain insight into the relationships between clock speed, runtime and energy consumption.

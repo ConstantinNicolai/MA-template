@@ -45,7 +45,9 @@ inference stages, necessitating the study of both performance metrics.
 
 
 \section{Scope}
-This can only be written, when research is finished.
+The intended scope for this thesis is collecting a dataset, validating the usability of said dataset, using it to perform predictions and lastly evaluating the quality of the predictions. \\
+In practice there are also limitations of the scope in terms of which hardware and which neural networks are included in the study. Here the hardware is limited to the Nvidia RTX 2080 TI and the Nvidia A30. The neural networks in use are all part of the Pytorch Torchvision library. \\
+Lastly, due to the grid-search like nature of the study, there are points in the grid where some incompatabilities occurs. This may be a model which does not fit onto a GPU or a benchmark which takes a prohibitive amount of time for a specific setting. Given the amount of troubleshooting necessary to find workarounds for all these edge cases of little practical applicability, we take the freedom of not taking them into the scope of this work.
 
 
 \section{Contributions Overview}
@@ -60,7 +62,7 @@ to conduct the execution time measurements. The power measurements
 are conducted using the command-line tool 
 nvidia-smi\footnote{\url{https://docs.nvidia.com/deploy/nvidia-smi/index.html}}
 being run in the background while the benchmark is performed.\\
-In order to enable repeatability the execution times and power readings,
+In order to enable repeatability, the execution times and power readings
 along with their respective measurement errors are stored together with the
 Pytorch objects for profiled operations, along with a sensible selection of
 related metrics.
@@ -77,7 +79,7 @@ accompanying heat output.
 \subsection{Validation}
 In our third and final contribution we investigate the quality of our dataset of
 measurements for individual operations by comparing the sum of individual operations
-against a full neural network run for both execution time and energy consumption.\\
+against a full neural network measurement for both execution time and energy consumption.\\
 In the second part of this contribution we assess the accuracy of our predictions
 both for individual operations as well as for full neural networks. Both for the
 individual operations as well as for the full neural networks this is achieved by
