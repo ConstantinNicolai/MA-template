@@ -10,7 +10,7 @@ In this first section our focus is to ensure the datasets we collect for trainin
 \subsection{Methodology}
 Our approach to validating the datasets is conceptually rather simple. Our measurements of the individual operations should resemble their execution in a DNN. In order to verify this, we compare our measurements of complete DNN executions, to the result summed up from our individually measured operations. \\
 Our measurements for the complete DNN executions are performed using the same pipeline used to measure the individual operations. Using this pipeline is possible because the script can simply view a complete DNN as one larger operation to be profiled.\\
-We also built the script that extracts which unique operations are present in a speficic DNN in a way that is also tracks how often each unique operation occurs. This way, we can sum the results from our collected dataset accordingly.
+We also built the script that extracts which unique operations are present in a specific DNN in a way that is also tracks how often each unique operation occurs. This way, we can sum the results from our collected dataset accordingly.
 
 
 \subsection{Hardware Platforms}
@@ -32,9 +32,9 @@ Our results for the A30 with its tensor cores disabled are already more precise 
 
 
 \subsubsection{A30 with Tensor Cores Enabled}
-Our results for the A30 with its tensor cores enabled are very promising. While the earlier trends did not completely vanish, they are even less pronounced than for the A30 with disabled tensor cores. This hardware config yielded the most precise summation of the three configurations.
+Our results for the A30 with its tensor cores enabled are very promising. While the earlier trends did not completely vanish, they are even less pronounced than for the A30 with disabled tensor cores. This hardware configuration yielded the most precise summation of the three configurations.
 
-\subsubsection{Runtime Uncertainty Behaviour}
+\subsubsection{Runtime Uncertainty Behavior}
 For all runtime results, the standard deviation is very small, both for the summation and for the measured runtimes. Given that, it is clear that the discrepancies between the two cannot be solely caused by statistical noise. \\
 Unfortunately, since this dataset validation is not they primary focus of this work, a deeper dive into its error estimation falls outside the scope.
 
@@ -77,10 +77,11 @@ With this section we are moving on from results and insight gained directly from
 
 Because the prediction model works on the operations level, we will begin by evaluating it on the operations level. \\
 We are using the implementations from the \texttt{sklearn} library and have investigated XGBRegressor, ExtraTreesRegressor and RandomForestRegressor to use as our prediction model. Initial test showed clearly that ExtraTreesRegressor performed worse than the others in terms of predictive power, so we focused on the other two. \\
-We chose to use the coefficient of determination, also known as $R^2$, as our metric for the prediction accuracy. In order to provide a more well rounded representation of the results, both the $R^2$ score for the previousy unused test set, as well as the mean $R^2$ score for a 15 fold cross validation are given. \\
-Because the inference and training datasets are conceptually seperate and measured independently, the prediction models are seperate as well. Naturally,  their evaluation is split up too.
+We chose to use the coefficient of determination, also known as $R^2$, as our metric for the prediction accuracy. In order to provide a more well rounded representation of the results, both the $R^2$ score for the previously unused test set, as well as the mean $R^2$ score for a 15 fold cross validation are given. \\
+Because the inference and training datasets are conceptually separate and measured independently, the prediction models are separate as well. Naturally,  their evaluation is split up too.
 
-\subsubsection{Training}
+
+\subsubsection{Training A30}
 
 
 
@@ -88,7 +89,7 @@ Because the inference and training datasets are conceptually seperate and measur
 \centering
 \begin{tabular}{|c|c|c|}
 \hline
- \textbf{Training}& \textbf{Random Forest} & \textbf{XGBoost} \\
+ \textbf{Training A30}& \textbf{Random Forest} & \textbf{XGBoost} \\
 \hline
 CV $\overline{R^2}_{time}$ & $0.876 \pm 0.073$ &  $0.912 \pm 0.04$ \\
 \hline
@@ -96,10 +97,10 @@ Test Set $R^2_{time}$ & $0.9036$ & $0.9018$ \\
 \hline
 CV $\overline{R^2}_{power}$ & $0.977 \pm 0.007$  &  $0.985 \pm 0.003$\\
 \hline
-Test Set $R^2_{time}$ & $0.9797$ & $0.9868$ \\
+Test Set $R^2_{power}$ & $0.9797$ & $0.9868$ \\
 \hline
 \end{tabular}
-\caption{$R^2$ scores for the operations level training prediction models.}
+\caption{The operations level results for this predictor are very good. With scores of around $0.9$ for the runtime predictor and around $0.98$ for the power predictor, its performance is very respectable. The XGBoost predictor shows marginally better preformance to the random forest one, but the results are vert close.}
 \label{tab:pred_res}
 \end{table}
 
@@ -107,7 +108,7 @@ Test Set $R^2_{time}$ & $0.9797$ & $0.9868$ \\
 The resulting values for the model predicting training performance can be found in Table \ref{tab:pred_res}. Keep in mind that the results do show a small amount of variation depending on the random seed used for the predictions models and the test set, training set split. \\
 As can be seen from the results in the table, the XGBoost model preforms marginally better in terms of prediction accuracy. Unfortunately, this was only discovered very late in the research process, because it was hidden in the random seed uncertainty. As further work as already done with the random forest model, a pivot back would go beyond the scope. Additionally, the prediction performance may be worse, but not by a large margin. Therefore further results shown were acquired using the random forest model. This also provides the advantage of using the model which is more simple in nature and should exhibit better scalability properties in general. Investigations into which model can provide predictions with lower latency could also be part of future work. \\
 We also included Figure \ref{fig:testsetoperations} in order to convey a visual impression of the prediction performance. For a random subset of operations from the test set, it shows the predicted value alongside the measurement value. \\
-Both the $R^2$ score results as well as the visual interpretation tell a similar story. We clearly have a stonger predictive power for the power model than for the runtime model. The runtime model still provides decent results, but they are not on the same level as the power model. Both prediction performance and prediction latency requirements will determine whether this approach is suitable for any given application in the end, but it seems reasonable to assume that the current performance would be applicable to some areas.
+Both the $R^2$ score results as well as the visual interpretation tell a similar story. We clearly have a stronger predictive power for the power model than for the runtime model. The runtime model still provides decent results, but they are not on the same level as the power model. Both prediction performance and prediction latency requirements will determine whether this approach is suitable for any given application in the end, but it seems reasonable to assume that the current performance would be applicable to some areas.
 
 
 \begin{figure}[htbp]
@@ -119,11 +120,11 @@ Both the $R^2$ score results as well as the visual interpretation tell a similar
 \end{figure}
 
 
-\subsubsection{Inference}
+\subsubsection{Inference A30}
 
 The resulting values for the model predicting inference performance can be found in Table \ref{tab:pred_res_inf}. Our resulting $R^2$ scores lie in a very similar regime as the ones for the training model. \\
 If we were to attribute the lower predictive performance of the runtime model with XGBoost and for the random forest model test set score to more than the inherent uncertainty, it might be explainable by the smaller actual runtimes in the inference case. Smaller runtimes with the same measurement methodology should result in similar absolute uncertainties and therefore in larger relative uncertainties. These larger relative uncertainties might play a part in the slightly weaker predictive performance we observe.\\
-All power model scores both for the random forest model, as well we the XGBoost model show practically identical performance to the training model, taking into consideration the additional uncertainy introduced by the random seed affecting the predictive performance slightly. \\
+All power model scores both for the random forest model, as well we the XGBoost model show practically identical performance to the training model, taking into consideration the additional uncertainty introduced by the random seed affecting the predictive performance slightly. \\
 Given the very similar results, both in these metrics and in the visual interpretation of Figure \ref{fig:testsetops_inf}, our conclusions for the inference model are the same as for the training model. The lower predictive power of the runtime model compared to the power model will result in a limit of its suitable applications at some point, but its performance is still acceptable. 
 
 
@@ -132,7 +133,7 @@ Given the very similar results, both in these metrics and in the visual interpre
 \centering
 \begin{tabular}{|c|c|c|}
 \hline
- \textbf{Inference}& \textbf{Random Forest} & \textbf{XGBoost} \\
+ \textbf{Inference A30}& \textbf{Random Forest} & \textbf{XGBoost} \\
 \hline
 CV $\overline{R^2}_{time}$ & $0.890 \pm 0.66$ &  $0.898 \pm 0.05$ \\
 \hline
@@ -140,10 +141,10 @@ Test Set $R^2_{time}$ & $0.8827$ & $0.8924$ \\
 \hline
 CV $\overline{R^2}_{power}$ & $0.981 \pm 0.003$  &  $0.988 \pm 0.002$\\
 \hline
-Test Set $R^2_{time}$ & $0.9853$ & $0.9895$ \\
+Test Set $R^2_{power}$ & $0.9853$ & $0.9895$ \\
 \hline
 \end{tabular}
-\caption{$R^2$ scores for the operations level inference prediction models.}
+\caption{Our inference predictor for the A30 does very well. With runtime scores just below $0.9$ and power scores higher than $0.98$, it is performs just as well as the A30 training predictor. }
 \label{tab:pred_res_inf}
 \end{table}
 
@@ -157,13 +158,62 @@ Test Set $R^2_{time}$ & $0.9853$ & $0.9895$ \\
     \label{fig:testsetops_inf}
 \end{figure}
 
+
+\subsubsection{Training RTX2080TI}
+
+The prediction model for the RTX2080TI is not built to predict for specific clock speeds. Instead it is trained on a dataset collected running the GPU in its default configuration. Therefore that is also what it predicts for. Unfortunately, we find worse prediction performance than for our A30 predictors. The results can be seen in table \ref{tab:pred_res_2080}. They are not unusable, but disappointing in comparison. Interestingly however, this predictor breaks the pattern of XGBoost always performing a little better. Here we find a few cases where is performs better and a few where it performs worse. This might come down to the property of random forest models of generalizing pretty well, even with a smaller amount of training data. Since this is a dataset for the default auto clock speed, it is several times smaller then the dataset for multiple clock speeds. 
+
+\begin{table}[h!]
+\centering
+\begin{tabular}{|c|c|c|}
+\hline
+ \textbf{Training 2080TI}& \textbf{Random Forest} & \textbf{XGBoost} \\
+\hline
+CV $\overline{R^2}_{time}$ & $0.755 \pm 0.122$ &  $0.684 \pm 0.359$ \\
+\hline
+Test Set $R^2_{time}$ & $0.813$ & $0.793$ \\
+\hline
+CV $\overline{R^2}_{power}$ & $0.920 \pm 0.058$  &  $0.921 \pm 0.054$\\
+\hline
+Test Set $R^2_{power}$ & $0.866$ & $0.869$ \\
+\hline
+\end{tabular}
+\caption{The training predictor for the 2080TI scores notably lower than the A30 predictors. It also reverses the A30 predictor trend of the XGBoost models performing slightly better. For the 2080TI predictors, XGBoost performs a little worse. The smaller training set due to the lack of a clock speed study for the A30 and the smaller focus on consistency of a consumer GPU compared to the A30 might contribute to the weaker predictor performance here. Still, with a runtime score of over $0.75$ and a power score of around $0.9$ it is far from unusable.}
+\label{tab:pred_res_2080}
+\end{table}
+
+\subsubsection{Inference RTX2080TI}
+
+The resulting $R^2$ scores for our 2080TI inference predictor can be seen in table \ref{tab:pred_res_2080_inf}. Especially for between the runtime models we see a steep drop in $R^2$ score from the random forest model to the XGBoost model. But even for the better performing random forest model, this is still the worst performing predictor between our four predictor models. This could caused by a combination of multiple contributors. It is trained on a smaller dataset, since it is not a multi clock model and it is an inference predictor, which means it has to predict smaller absolute values, which will have larger relative errors in the training set. Lastly, since the 2080TI is a consumer GPU and not a datacenter GPU, its behavior is tuned to focus on the best burst load performance, but not necessarily on the greatest consistency and stability compared to a datacenter GPU such as the A30.
+
+
+\begin{table}[h!]
+\centering
+\begin{tabular}{|c|c|c|}
+\hline
+ \textbf{Inference 2080TI}& \textbf{Random Forest} & \textbf{XGBoost} \\
+\hline
+CV $\overline{R^2}_{time}$ & $0.735 \pm 0.088$ &  $0.607 \pm 0.079$ \\
+\hline
+Test Set $R^2_{time}$ & $0.769$ & $0.613$ \\
+\hline
+CV $\overline{R^2}_{power}$ & $0.939 \pm 0.034$  &  $0.944 \pm 0.026$\\
+\hline
+Test Set $R^2_{power}$ & $0.908$ & $0.885$ \\
+\hline
+\end{tabular}
+\caption{The inference predictor for the 2080TI is our worst performer. It shares the challenges of the 2080TI training predictor, while having to work with a dataset of smaller values, which naturally have larger relative errors. Here the XGBoost predictor for runtime scores so much lower that there is not question in using the random forest one. Sticking to the random forest predictors here, we have a runtime score of $0.73$ and a power score of $0.94$, which is lower than we would like but still decent enough.}
+\label{tab:pred_res_2080_inf}
+\end{table}
+
+
 \subsection{Neural Network Level}
 
 
-In this next step, we will evaluate the prediction performance of the random forest model on the neural network level. We will perform an more detailed ananlysis on this part, as this is the abstaction level which is most commonly used and therefore the most relevant to provide predictions for. \\
-Since our preditction model is capable of providing predictions for different clock speeds, we will conduct the validation for each clock speed. As this is a graphical validation, we will provide the measured results for each clock speed and below the predicted results. This way both the direct comparison between measurement and prediction is visible, as well as the comparison of the behavior across different clocks compared between measurement and prediction. \\
+In this next step, we will evaluate the prediction performance of the random forest model on the neural network level. We will perform an more detailed analysis on this part, as this is the abstraction level which is most commonly used and therefore the most relevant to provide predictions for. \\
+Since our prediction model is capable of providing predictions for different clock speeds, we will conduct the validation for each clock speed. As this is a graphical validation, we will provide the measured results for each clock speed and below the predicted results. This way both the direct comparison between measurement and prediction is visible, as well as the comparison of the behavior across different clocks compared between measurement and prediction. \\
 Results are given for both runtime and energy, as well as for both inference and training. Additionally, a plot of the product of runtime and energy is provided in order to give an option which may show a tradeoff between optimizing for either on their own. For this the results for each clock speed are normalized, because the orders of magnitude between the different models became to large to remain readable in this product. \\
-Furthermore, not as a preplanned point of interest for this work, but rather as a fortunate byproduct of the necessary measurements we have also found some patterns in the behavior accross clocks, which will will discuss for a bit.
+Furthermore, not as a preplanned point of interest for this work, but rather as a fortunate byproduct of the necessary measurements we have also found some patterns in the behavior across clocks, which will will discuss for a bit.
 
 
 
@@ -190,7 +240,7 @@ Furthermore, not as a preplanned point of interest for this work, but rather as 
     \vspace{0.2cm}
     \parbox{1.1\textwidth}{\centering\textbf{Predicted Energy per Model Inference}}
     \makebox[\textwidth]{\includegraphics[width=1.1\textwidth]{Plots/clocks/predicted_energy_across_clocks_inference.pdf}}
-    \caption{As expected from the operations level results, we can see that the predictions for the energy are even closer then the runtime results. Of course they also maintain the clock speed optimum found in the meausurements, making the predictions useful for energy optimizations as well.}
+    \caption{As expected from the operations level results, we can see that the predictions for the energy are even closer then the runtime results. Of course they also maintain the clock speed optimum found in the measurements, making the predictions useful for energy optimizations as well.}
     \label{fig:fprpredenergyinf}
 \end{figure}
 
@@ -199,12 +249,12 @@ Furthermore, not as a preplanned point of interest for this work, but rather as 
     \centering
     \parbox{1.1\textwidth}{\centering\textbf{Measured Time per Model Training}}
     \makebox[\textwidth]{\includegraphics[width=1.1\textwidth]{Plots/clocks/measured_time_across_clocks_training.pdf}}
-    \caption{For these training runtime results we see the same behaviour as for inference. Lower clock speeds leed to longer runtimes.}
+    \caption{For these training runtime results we see the same behavior as for inference. Lower clock speeds lead to longer runtimes.}
     \label{fig:grpfmtimetrain}
     \vspace{0.2cm}
     \parbox{1.1\textwidth}{\centering\textbf{Predicted Time per Model Training}}
     \makebox[\textwidth]{\includegraphics[width=1.1\textwidth]{Plots/clocks/predicted_time_across_clocks_training.pdf}}
-    \caption{We see a similar prediction preformance to the inference case. The prediction provides the correct ordering, even though the absolute values are not perfect.}
+    \caption{We see a similar prediction performance to the inference case. The prediction provides the correct ordering, even though the absolute values are not perfect.}
     \label{fig:grppredtimetrain}
 \end{figure}
 
@@ -267,13 +317,13 @@ When trying to optimize for a balance between energy and runtime, the story beco
 \section{Predictor Latency}
 
 
-After some more tweaks to make the performance less abysmal, we arrived at a loading time of around 30 seconds for the full set of models used to validate te predictor. These 30 seconds are of in a completely different order of magnitude in terms of execution time compared to preproccessing, prediction of the models or even execution of the models. Realistically, this time is more comparable to having to download a model before being able to benchmark it. The next largest contributer in terms of execution time is preproccessing the dataset in order to format is in a way that can be used as an input for our predictor model. In its current form this step takes somewhere around 500 ms. For the full validation set of 18 model-input sets it takes around 600 ms. For an individual model it takes less than 500 ms. The fact that this step is relatively speaking so slow if unfortunate. This is a result of this being research code which is not optimized. While it is not possible to predict how much headroom for optimization there is, some improvements should be possible, if this were to go to production. \\
-The most important evaluation in terms of predictor execution time is however the execution time of the actual predictor model. Predicting time and energy at a specific clock speed for all model-input sets in the validation set shows very good performance. Across multiple clock speeds and both for the training predictor and the inference predictor the resulting execution time hovers around 30 ms. Even for the scenario with the smallest execution time, inference at maximum clock speed, this still beats the collective execution time of around 300 ms of the validation set by one order of magnitude. And this comparison shifts only further in favour of the predictor model when we look at a still very reasonable scenario of training at a clock speed of 930 MHz. With this the collective execution time is close to 2000 ms, while the predictor time is not affected. Here we have an predictor latency over 60 times lower than performing the measurement instead.
+After some more tweaks to make the performance less abysmal, we arrived at a loading time of around 30 seconds for the full set of models used to validate the predictor. These 30 seconds are of in a completely different order of magnitude in terms of execution time compared to preprocessing, prediction of the models or even execution of the models. Realistically, this time is more comparable to having to download a model before being able to benchmark it. The next largest contributor in terms of execution time is preprocessing the dataset in order to format is in a way that can be used as an input for our predictor model. In its current form this step takes somewhere around 500 ms. For the full validation set of 18 model-input sets it takes around 600 ms. For an individual model it takes less than 500 ms. The fact that this step is relatively speaking so slow if unfortunate. This is a result of this being research code which is not optimized. While it is not possible to predict how much headroom for optimization there is, some improvements should be possible, if this were to go to production. \\
+The most important evaluation in terms of predictor execution time is however the execution time of the actual predictor model. Predicting time and energy at a specific clock speed for all model-input sets in the validation set shows very good performance. Across multiple clock speeds and both for the training predictor and the inference predictor the resulting execution time hovers around 30 ms. Even for the scenario with the smallest execution time, inference at maximum clock speed, this still beats the collective execution time of around 300 ms of the validation set by one order of magnitude. And this comparison shifts only further in favor of the predictor model when we look at a still very reasonable scenario of training at a clock speed of 930 MHz. With this the collective execution time is close to 2000 ms, while the predictor time is not affected. Here we have an predictor latency over 60 times lower than performing the measurement instead.
 
 % Here, describe the latency of the predictor model for a few batch sizes and give sensible context to understand the results in.\\
 
 % input data loading from pkl file takes very, very long for many predictions. Around 80 to 90 seconds.\\
 
-% preproccessing takes around 500ms, a little longer for larger inputs, marginally shorter for smaller ones\\
+% preprocessing takes around 500ms, a little longer for larger inputs, marginally shorter for smaller ones\\
 
 % the prediction itself only takes somewhere in the 5 to 30 ms range even for many predictions at once. 
