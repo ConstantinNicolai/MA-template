@@ -19,17 +19,31 @@ Earlier in this discussion, it was mentioned, that this is an exploratory work. 
 
 
 
-WHAT ARE OUR TAKEAWAYS FROM THE RESULTS IN CONTRIB 3?\\
-A30 PREDICTOR IS MORE ACCURATE, MAYBE DUE TO LARGER TRAINING SET FROM MULTI CLOCK APPROACH. XGBOOST APPEARS TO SCALE TO BETTER ACCURACY WITH THIS LARGER DATASET  
+% WHAT ARE OUR TAKEAWAYS FROM THE RESULTS IN CONTRIB 3?\\
+% A30 PREDICTOR IS MORE ACCURATE, MAYBE DUE TO LARGER TRAINING SET FROM MULTI CLOCK APPROACH. XGBOOST APPEARS TO SCALE TO BETTER ACCURACY WITH THIS LARGER DATASET  
 
-2080TI PREDICTOR SHOWS WORSE PERFORMANCE. MIGHT BE DUE TO SMALLER DATASET AND LESS CONSISTENT BEHAVIOUR OF A CONSUMER GPU
+% 2080TI PREDICTOR SHOWS WORSE PERFORMANCE. MIGHT BE DUE TO SMALLER DATASET AND LESS CONSISTENT BEHAVIOUR OF A CONSUMER GPU
 
 
 
-THIS COVERS WHY WE TOOK THE PART OF THE MAP WE DID. NOW WE DISCUSS PREDICTION MODELS SHORTLY AND TRANSITION INTO VALIDATION AND ITS PURPOSE HERE THEN FOLLOWING UP WITH THIS WORKS APPLICATION. THIS SHOUD LEAD INTO THE OUTLOOK
+% THIS COVERS WHY WE TOOK THE PART OF THE MAP WE DID. NOW WE DISCUSS PREDICTION MODELS SHORTLY AND TRANSITION INTO VALIDATION AND ITS PURPOSE HERE THEN FOLLOWING UP WITH THIS WORKS APPLICATION. THIS SHOUD LEAD INTO THE OUTLOOK
 
 
 
 \section{Outlook}
+As already established in the discussion, this is an exploratory and foundational work in its nature, leading to a very broad possible outlook. For this reason, we will attempt to focus on most promosing and clear avenues for future work we encountered in our study. \\
+In the light of wanting to guide towards use of the best fitting hardware for a spefic task and requirements, the most promising avenue for future work would be to expand the study to a larger number of hardware platforms. The lowest friction way of doing that would be to collect datasets for further Nvidia GPUs at their default clock and add the GPU model as a paramter for the prediction model, in the same way, the clock speed was added to the A30 predictor. \\
+Another direction could be an attempt at improving the prediction performance. A good starting point in order to do that could be to expand the base set of model-input sets which was used in this work to build the training set for the predictor. Including operations from even more model-input sets, maybe even types of models not included in this work could go a long way towards improving the accuracy and generalizability beyond its current state. \\
+Even though we limited our GPU clock study to the A30 in this work, there is no conceptual reason, why these kinds of clock speed studies could not be expanded to a more GPUs, as long as they support setting the clock speed manually. This might not be the most novel contribution of all time, but it does carry the chance of discovering interesting patterns of behaviors.\\
+Another dimension which could be expanded is one which was fixed from a very early point in our study onwards. This is the dimensions of which metrics are included in the study. In our study we covered time, power and energy. Conceptually, it is a very simple step to add further metrics and can provide a lot of additional insight. The difficult part in this is the question of tooling. If tooling collecting measurements of an additional metric is found, which can be added into the dataset collection without major complications, this is very promising. A prime candidate for the next metric to add would be memory usage. However, the more different tools are used, the harder expansion towards different GPUs, or even other hardware platforms will become. Additionally, depending on the type of hardware platforms one might want to add in further studies, not all metrics which can be applied to GPUs are necessarily meaningful for another platform. 
+
+
+4 different GPU vendors like AMD and Intel
+
+
+5 going very far away from the presented methodolgy including different types of platforms like CPU and other accelerators like IPUs and FPGAs. 
+
+
+
 
 \section{Conclusion}
