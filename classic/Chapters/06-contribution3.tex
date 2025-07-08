@@ -58,7 +58,7 @@ Unfortunately, since this dataset validation is not they primary focus of this w
 
 
 
-\setcounter{page}{\numexpr\value{savedpage}+3\relax}
+\setcounter{page}{\numexpr\value{savedpage}+4\relax}
 
 
 \subsection{Tensor Core Real-World Impact}
@@ -76,8 +76,8 @@ With this section we are moving on from results and insight gained directly from
 \subsection{Operations Level}
 
 Because the prediction model works on the operations level, we will begin by evaluating it on the operations level. \\
-We are using the implementations from the \texttt{sklearn} library and have investigated XGBRegressor, ExtraTreesRegressor and RandomForestRegressor to use as our prediction model. Initial test showed clearly that ExtraTreesRegressor performed worse than the others in terms of predictive power, so we focused on the other two. \\
-We chose to use the coefficient of determination, also known as $R^2$, as our metric for the prediction accuracy. In order to provide a more well rounded representation of the results, both the $R^2$ score for the previously unused test set, as well as the mean $R^2$ score for a 15 fold cross validation are given. \\
+We are using the implementations from the \texttt{sklearn} library and have investigated XGBRegressor, ExtraTreesRegressor and RandomForestRegressor to use as our prediction model. Initial tests showed clearly that ExtraTreesRegressor performed worse than the others in terms of predictive power, so we focused on the other two. \\
+We chose to use the coefficient of determination, also known as $R^2$, as our metric to evaluate the prediction accuracy. In order to provide a more well rounded representation, both the $R^2$ score for a test set seperate from the training set, as well as the mean $R^2$ score for a 15 fold cross validation are given. \\
 Because the inference and training datasets are conceptually separate and measured independently, the prediction models are separate as well. Naturally,  their evaluation is split up too.
 
 
@@ -100,15 +100,15 @@ CV $\overline{R^2}_{power}$ & $0.977 \pm 0.007$  &  $0.985 \pm 0.003$\\
 Test Set $R^2_{power}$ & $0.9797$ & $0.9868$ \\
 \hline
 \end{tabular}
-\caption{The operations level results for this predictor are very good. With scores of around $0.9$ for the runtime predictor and around $0.98$ for the power predictor, its performance is very respectable. The XGBoost predictor shows marginally better preformance to the random forest one, but the results are vert close.}
+\caption{These operations level results for this predictor are very good. With scores of around $0.9$ for the runtime predictor and around $0.98$ for the power predictor, its performance is very respectable. The XGBoost predictor shows marginally better performance to the random forest one, but the results are very close.}
 \label{tab:pred_res}
 \end{table}
 
 
-The resulting values for the model predicting training performance can be found in Table \ref{tab:pred_res}. Keep in mind that the results do show a small amount of variation depending on the random seed used for the predictions models and the test set, training set split. \\
-As can be seen from the results in the table, the XGBoost model preforms marginally better in terms of prediction accuracy. Unfortunately, this was only discovered very late in the research process, because it was hidden in the random seed uncertainty. As further work as already done with the random forest model, a pivot back would go beyond the scope. Additionally, the prediction performance may be worse, but not by a large margin. Therefore further results shown were acquired using the random forest model. This also provides the advantage of using the model which is more simple in nature and should exhibit better scalability properties in general. Investigations into which model can provide predictions with lower latency could also be part of future work. \\
+The resulting values for the model predicting training performance can be found in Table \ref{tab:pred_res}. Keep in mind that the scores show a small amount of variation depending on the random seed used for the predictions models and the test set, training set split. \\
+As can be seen from the results in the table, the XGBoost model preforms marginally better in terms of prediction accuracy. Unfortunately, this was only discovered very late in the research process, because it was hidden in the random seed uncertainty. As further work was already conducted with the random forest model, a pivot back would go cost a lot of time. Additionally, the prediction performance may be worse, but not by a large margin. Therefore further results shown were acquired using the random forest model. This also provides the advantage of using a model which is more simple in nature and should exhibit better scalability properties in general. Investigations into which model can provide predictions with lower latency could also be part of future work. \\
 We also included Figure \ref{fig:testsetoperations} in order to convey a visual impression of the prediction performance. For a random subset of operations from the test set, it shows the predicted value alongside the measurement value. \\
-Both the $R^2$ score results as well as the visual interpretation tell a similar story. We clearly have a stronger predictive power for the power model than for the runtime model. The runtime model still provides decent results, but they are not on the same level as the power model. Both prediction performance and prediction latency requirements will determine whether this approach is suitable for any given application in the end, but it seems reasonable to assume that the current performance would be applicable to some areas.
+Both the $R^2$ score results as well as the visual interpretation tell a similar story. We clearly have a stronger predictive power for the power model than for the runtime model. The runtime model still provides decent results, but they are not on the same level as the power model. Both prediction performance and prediction latency requirements will determine whether the performance we can provide is suitable for any given application in the end.
 
 
 \begin{figure}[htbp]
@@ -123,7 +123,7 @@ Both the $R^2$ score results as well as the visual interpretation tell a similar
 \subsubsection{Inference A30}
 
 The resulting values for the model predicting inference performance can be found in Table \ref{tab:pred_res_inf}. Our resulting $R^2$ scores lie in a very similar regime as the ones for the training model. \\
-If we were to attribute the lower predictive performance of the runtime model with XGBoost and for the random forest model test set score to more than the inherent uncertainty, it might be explainable by the smaller actual runtimes in the inference case. Smaller runtimes with the same measurement methodology should result in similar absolute uncertainties and therefore in larger relative uncertainties. These larger relative uncertainties might play a part in the slightly weaker predictive performance we observe.\\
+If we were to attribute the lower predictive performance of the runtime model with XGBoost and for the random forest model test set score to more than the inherent uncertainty, it might be explained by the smaller absolute runtimes for inference. Smaller runtimes with the same measurement methodology should result in similar absolute uncertainties and therefore in larger relative uncertainties. These larger relative uncertainties might play a part in the slightly weaker predictive performance we observe for the inference predictor.\\
 All power model scores both for the random forest model, as well we the XGBoost model show practically identical performance to the training model, taking into consideration the additional uncertainty introduced by the random seed affecting the predictive performance slightly. \\
 Given the very similar results, both in these metrics and in the visual interpretation of Figure \ref{fig:testsetops_inf}, our conclusions for the inference model are the same as for the training model. The lower predictive power of the runtime model compared to the power model will result in a limit of its suitable applications at some point, but its performance is still acceptable. 
 
@@ -161,7 +161,7 @@ Test Set $R^2_{power}$ & $0.9853$ & $0.9895$ \\
 
 \subsubsection{Training RTX2080TI}
 
-The prediction model for the RTX2080TI is not built to predict for specific clock speeds. Instead it is trained on a dataset collected running the GPU in its default configuration. Therefore that is also what it predicts for. Unfortunately, we find worse prediction performance than for our A30 predictors. The results can be seen in table \ref{tab:pred_res_2080}. They are not unusable, but disappointing in comparison. Interestingly however, this predictor breaks the pattern of XGBoost always performing a little better. Here we find a few cases where is performs better and a few where it performs worse. This might come down to the property of random forest models of generalizing pretty well, even with a smaller amount of training data. Since this is a dataset for the default auto clock speed, it is several times smaller then the dataset for multiple clock speeds. 
+The prediction model for the RTX2080TI is not built to predict for specific clock speeds. Instead it is trained on a dataset collected running the GPU in its default configuration. Therefore that is also what it predicts for. Unfortunately, we find worse prediction performance than for our A30 predictors. The results can be seen in table \ref{tab:pred_res_2080}. They are not unusable, but disappointing in comparison. Interestingly however, this predictor breaks the pattern of XGBoost always performing a little better. Here we find a few cases where it performs better and a few where it performs worse. This might come down to the property of random forest models of generalizing pretty well, even with a smaller amount of training data. Since this is a dataset for the default auto clock speed, it is several times smaller then the dataset for multiple clock speeds. 
 
 \begin{table}[h!]
 \centering
@@ -184,7 +184,7 @@ Test Set $R^2_{power}$ & $0.866$ & $0.869$ \\
 
 \subsubsection{Inference RTX2080TI}
 
-The resulting $R^2$ scores for our 2080TI inference predictor can be seen in table \ref{tab:pred_res_2080_inf}. Especially for between the runtime models we see a steep drop in $R^2$ score from the random forest model to the XGBoost model. But even for the better performing random forest model, this is still the worst performing predictor between our four predictor models. This could caused by a combination of multiple contributors. It is trained on a smaller dataset, since it is not a multi clock model and it is an inference predictor, which means it has to predict smaller absolute values, which will have larger relative errors in the training set. Lastly, since the 2080TI is a consumer GPU and not a datacenter GPU, its behavior is tuned to focus on the best burst load performance, but not necessarily on the greatest consistency and stability compared to a datacenter GPU such as the A30.
+The resulting $R^2$ scores for our 2080TI inference predictor can be seen in table \ref{tab:pred_res_2080_inf}. For the runtime models we see a steep drop in $R^2$ score from the random forest model to the XGBoost model. But even for the better performing random forest model, this is still the worst performing predictor out of our four predictor models. This might be caused by a combination of multiple factors. It is trained on a smaller dataset, since it is not a multi clock model and it is an inference predictor, which means it has to predict smaller absolute values, which will have larger relative errors in the training set. Lastly, since the 2080TI is a consumer GPU and not a datacenter GPU, its behavior is tuned to focus on the best burst load performance, but not necessarily on the greatest consistency and stability compared to a datacenter GPU such as the A30.
 
 
 \begin{table}[h!]
@@ -210,10 +210,26 @@ Test Set $R^2_{power}$ & $0.908$ & $0.885$ \\
 \subsection{Neural Network Level}
 
 
-In this next step, we will evaluate the prediction performance of the random forest model on the neural network level. We will perform an more detailed analysis on this part, as this is the abstraction level which is most commonly used and therefore the most relevant to provide predictions for. \\
-Since our prediction model is capable of providing predictions for different clock speeds, we will conduct the validation for each clock speed. As this is a graphical validation, we will provide the measured results for each clock speed and below the predicted results. This way both the direct comparison between measurement and prediction is visible, as well as the comparison of the behavior across different clocks compared between measurement and prediction. \\
-Results are given for both runtime and energy, as well as for both inference and training. Additionally, a plot of the product of runtime and energy is provided in order to give an option which may show a tradeoff between optimizing for either on their own. For this the results for each clock speed are normalized, because the orders of magnitude between the different models became to large to remain readable in this product. \\
-Furthermore, not as a preplanned point of interest for this work, but rather as a fortunate byproduct of the necessary measurements we have also found some patterns in the behavior across clocks, which will will discuss for a bit.
+In this next step, we will evaluate the prediction performance of the random forest model for the A30 on the neural network level. \\
+% We will perform an more detailed analysis on this part, as this is the abstraction level which is most commonly used and therefore the most relevant to provide predictions for. \\
+Since this prediction model is capable of providing predictions for different clock speeds, we will conduct the validation for each clock speed. As this is a graphical validation, we will provide the measured results for each clock speed with the predicted results below. This way both the direct comparison between measurement and prediction is visible, as well as the behavior across different clock speeds. \\
+Results are given for both runtime and energy, as well as for both inference and training. Additionally, plots of the energy delay product are provided to illustrate a trade-off between optimizing for either time or energy on their own. For this, the results for each model are normalized, because the orders of magnitude between the different models are to large for this plot to remain readable otherwise. \\
+% Furthermore, not as a preplanned point of interest for this work, but rather as a fortunate byproduct of the necessary measurements we have also found some patterns in the behavior across clocks, which we will discuss for too.
+\ref{fig:grpfmtimeinf} As expected for the inference runtime measurements, the runtime decreases with an increase in clock speed for all tested models. \\
+\ref{fig:gprpredtimeinf} The corresponding inference runtime predictions manage to maintain the ordering between different clock speeds.
+% While the absolute results for the predictions may be close, but not perfect, the ordering between different clock speeds is maintained flawlessly from the measurement results. 
+This allows the predictions to be used to determine the optimal clock speed. \\
+\ref{fig:grpfmenergyinf} As opposed to the monotonous relationship between runtime and clock speed, the optimal clock speed for the inference energy measurements is $900$ MHz. \\
+\ref{fig:fprpredenergyinf} As expected from the operations level results, we can see that the predictions for the inference energy are closer to their corresponding measurements than the inference runtime predictions are to their corresponding measurements. They also maintain the clock speed optimum found in the measurements, making these predictions suitable for energy optimizations. \\
+\ref{fig:grpfmtimetrain} For the training runtime measurements we observe the same behavior we saw in the inference case. Lower clock speeds lead to longer runtimes.\\
+\ref{fig:grppredenergytrain} In the training runtime predictions, we see a similar prediction performance to the inference case. The predictions provide the correct ordering in this case too.\\
+\ref{fig:grpfmenergytrain} Identically to the inference case, the optimal clock speed in terms of training energy measurement lies at 900 MHz. The absolute energy costs for training are between 2 and 5 times as high as the inference costs. \\
+\ref{fig:grppredenergytrain} Comparing these training energy predictions to the corresponding measurements just above illustrates how capable our predictions are at reproducing the real world behavior. These predictions are the most precise ones among the presented cases. The ordering is maintained in this case as well.\\
+\ref{fig:grppdpfminf} Different from the 900 MHz optimum for energy, we find the optimum for the inference measurement of the energy delay product at 1200 MHz. Being the product of runtime and energy it provides a more balanced metric to optimize along. \\
+\ref{fig:grppdppredinf} For the inference predictions of the energy delay product, we find larger discrepancies between measurement and prediction, than for the energy predictions. From the operations level evaluation, we know the power predictions perform better than the time predictions. The fact that time contributes to the energy delay product both as a factor in the energy and then again being multiplied with the energy prediction to form the prediction of the energy delay product, explains the observed larger discrepancies. \\
+% between measurement and prediction here, than for the energy results. \\
+\ref{fig:grppdpfmtrain} For the training measurements of the energy delay product, there is not a lot of change to be observed compared to the inference measurement results in the normalized plot. This indicates a roughly proportional scaling of the energy delay product between inference and training. \\
+\ref{fig:grppdppredtrain} In the training predictions of the energy delay product, we see much larger deviations between measurement and predictions compared to the inference case. Runtime predictions are less precise than power predictions. Absolute times are several times larger for training than for inference. This effect is amplified by the squared contribution of time towards the energy delay product. This squared contribution of a larger absolute value which is less precise causes the larger deviations.
 
 
 
@@ -221,12 +237,12 @@ Furthermore, not as a preplanned point of interest for this work, but rather as 
     \centering
     \parbox{1.1\textwidth}{\centering\textbf{Measured Time per Model Inference}}
     \makebox[\textwidth]{\includegraphics[width=1.1\textwidth]{Plots/clocks/measured_time_across_clocks_inference.pdf}}
-    \caption{As expected, the runtime decreases with an increase in clock speed for all tested models.}
+    \caption{Inference time measurements for 18 model-input sets across six clock speeds.}
     \label{fig:grpfmtimeinf}
     \vspace{0.2cm}
     \parbox{1.1\textwidth}{\centering\textbf{Predicted Time per Model Inference}}
     \makebox[\textwidth]{\includegraphics[width=1.1\textwidth]{Plots/clocks/predicted_time_across_clocks_inference.pdf}}
-    \caption{While the absolute results for the predictions may be close, but not perfect, the ordering between different clock speeds is maintained from the measurement results. This allows the predictions to be used to determine the optimal clock speed.}
+    \caption{Inference time predictions for 18 model-input sets across six clock speeds.}
     \label{fig:gprpredtimeinf}
 \end{figure}
 
@@ -235,12 +251,12 @@ Furthermore, not as a preplanned point of interest for this work, but rather as 
     \centering
     \parbox{1.1\textwidth}{\centering\textbf{Measured Energy per Model Inference}}
     \makebox[\textwidth]{\includegraphics[width=1.1\textwidth]{Plots/clocks/measured_energy_across_clocks_inference.pdf}}
-    \caption{As opposed to the monotonous relationship between runtime and clock speed, for energy the optimal clock speed lies at $900$ MHz.}
+    \caption{Inference energy measurements for 18 model-input sets across six clock speeds.}
     \label{fig:grpfmenergyinf}
     \vspace{0.2cm}
     \parbox{1.1\textwidth}{\centering\textbf{Predicted Energy per Model Inference}}
     \makebox[\textwidth]{\includegraphics[width=1.1\textwidth]{Plots/clocks/predicted_energy_across_clocks_inference.pdf}}
-    \caption{As expected from the operations level results, we can see that the predictions for the energy are even closer then the runtime results. Of course they also maintain the clock speed optimum found in the measurements, making the predictions useful for energy optimizations as well.}
+    \caption{Inference energy predictions for 18 model-input sets across six clock speeds.}
     \label{fig:fprpredenergyinf}
 \end{figure}
 
@@ -249,12 +265,12 @@ Furthermore, not as a preplanned point of interest for this work, but rather as 
     \centering
     \parbox{1.1\textwidth}{\centering\textbf{Measured Time per Model Training}}
     \makebox[\textwidth]{\includegraphics[width=1.1\textwidth]{Plots/clocks/measured_time_across_clocks_training.pdf}}
-    \caption{For these training runtime results we see the same behavior as for inference. Lower clock speeds lead to longer runtimes.}
+    \caption{Training time measurements for 18 model-input sets across six clock speeds.}
     \label{fig:grpfmtimetrain}
     \vspace{0.2cm}
     \parbox{1.1\textwidth}{\centering\textbf{Predicted Time per Model Training}}
     \makebox[\textwidth]{\includegraphics[width=1.1\textwidth]{Plots/clocks/predicted_time_across_clocks_training.pdf}}
-    \caption{We see a similar prediction performance to the inference case. The prediction provides the correct ordering, even though the absolute values are not perfect.}
+    \caption{Training time predictions for 18 model-input sets across six clock speeds.}
     \label{fig:grppredtimetrain}
 \end{figure}
 
@@ -263,12 +279,12 @@ Furthermore, not as a preplanned point of interest for this work, but rather as 
     \centering
     \parbox{1.1\textwidth}{\centering\textbf{Measured Energy per Model Training}}
     \makebox[\textwidth]{\includegraphics[width=1.1\textwidth]{Plots/clocks/measured_energy_across_clocks_training.pdf}}
-    \caption{some descriptive caption}
+    \caption{Training energy measurements for 18 model-input sets across six clock speeds.}
     \label{fig:grpfmenergytrain}
     \vspace{0.2cm}
     \parbox{1.1\textwidth}{\centering\textbf{Predicted Energy per Model Training}}
     \makebox[\textwidth]{\includegraphics[width=1.1\textwidth]{Plots/clocks/predicted_energy_across_clocks_training.pdf}}
-    \caption{some caption}
+    \caption{Training energy predictions for 18 model-input sets across six clock speeds.}
     \label{fig:grppredenergytrain}
 \end{figure}
 
@@ -276,14 +292,14 @@ Furthermore, not as a preplanned point of interest for this work, but rather as 
 
 \begin{figure}[htbp]
     \centering
-    \parbox{1.1\textwidth}{\centering\textbf{Measured Normalized Product of Time and Energy per Model Inference}}
+    \parbox{1.1\textwidth}{\centering\textbf{Measured Normalized Energy Delay Product per Model Inference}}
     \makebox[\textwidth]{\includegraphics[width=1.1\textwidth]{Plots/clocks/measured_pdp_inference.pdf}}
-    \caption{some descriptive caption}
+    \caption{Inference energy delay product measurements for 18 model-input sets across six clock speeds.}
     \label{fig:grppdpfminf}
     \vspace{0.2cm}
-    \parbox{1.1\textwidth}{\centering\textbf{Predicted Normalized Product of Time and Energy per Model Inference}}
+    \parbox{1.1\textwidth}{\centering\textbf{Predicted Normalized Energy Delay Product per Model Inference}}
     \makebox[\textwidth]{\includegraphics[width=1.1\textwidth]{Plots/clocks/predicted_pdp_inference.pdf}}
-    \caption{some caption}
+    \caption{Inference energy delay product predictions for 18 model-input sets across six clock speeds.}
     \label{fig:grppdppredinf}
 \end{figure}
 
@@ -291,39 +307,35 @@ Furthermore, not as a preplanned point of interest for this work, but rather as 
 
 \begin{figure}[htbp]
     \centering
-    \parbox{1.1\textwidth}{\centering\textbf{Measured Normalized Product of Time and Energy per Model Training}}
+    \parbox{1.1\textwidth}{\centering\textbf{Measured Normalized Energy Delay Product per Model Training}}
     \makebox[\textwidth]{\includegraphics[width=1.1\textwidth]{Plots/clocks/measured_pdp_training.pdf}}
-    \caption{some descriptive caption}
+    \caption{Training energy delay product measurements for 18 model-input sets across six clock speeds.}
     \label{fig:grppdpfmtrain}
     \vspace{0.2cm}
-    \parbox{1.1\textwidth}{\centering\textbf{Predicted Normalized Product of Time and Energy per Model Training}}
+    \parbox{1.1\textwidth}{\centering\textbf{Predicted Normalized Energy Delay Product per Model Training}}
     \makebox[\textwidth]{\includegraphics[width=1.1\textwidth]{Plots/clocks/predicted_pdp_training.pdf}}
-    \caption{some caption}
+    \caption{Training energy delay product predictions for 18 model-input sets across six clock speeds.}
     \label{fig:grppdppredtrain}
 \end{figure}
 
-\subsubsection{Measurement Observations}
-While we are not surprised by the runtime measurement results simply exhibiting shorter runtimes for higher clock speeds, we do find an interesting pattern for the energy measurement results. Both for training and inference we observe a "U" pattern across the clock speeds, see Figure \ref{fig:pattern}. With very high energy costs for very low clock speeds and high energy costs for very high clock speeds as well. But in between, for higher, but not very high clock speeds, we see a minimum for the required energy at a clock speed of $900$ MHz on the A30. More interestingly this pattern remains stable across both training and inference and for all models tested in this work. Therefore, even if there might be cases where it is not optimal, it is surely a good rule of thumb to use this as a starting point, when energy efficiency is of interest. \\
-When trying to optimize for a balance between energy and runtime, the story becomes less clear cut. Looking at the product of runtime and energy, see Figure \ref{fig:grppdpfminf} and Figure \ref{fig:grppdpfminf}, it becomes clear, that the optimum is not always at the same clock speed. However, within the clock speeds we tested, starting at $1200$ MHz seems like a good bet, since it is the most common optimum for the product of runtime and energy.
+\FloatBarrier
+
+\subsubsection{Patterns and Observations}
+While we are not surprised by the runtime measurement results simply exhibiting shorter runtimes for higher clock speeds, we do find an interesting pattern for the energy measurement results. Both for training and inference we observe a "U" pattern across the clock speeds, see Figure \ref{fig:pattern}. With very high energy costs for very low clock speeds and high energy costs for very high clock speeds as well. But in between, for higher, but not very high clock speeds, we see a minimum for the required energy at a clock speed of $900$ MHz on the A30. More interestingly this pattern remains stable across both training and inference and for all models tested. Therefore, even if there might be models where it is not optimal, it is surely a good rule of thumb to use this as a starting point when energy efficiency is of interest. \\
+When trying to optimize for a balance between energy and runtime, we observe a shift to the right. Looking at the energy delay product, see Figure \ref{fig:grppdpfminf} and Figure \ref{fig:grppdpfmtrain}, we see similar "U" pattern in the measurements, with the optimum at $1200$ MHz across inference and training. \\
+Unfortunately, we do not see this pattern reproduced perfectly by our predictions for the training case. Since the runtime has a squared contribution to the energy delay product and the absolute values for training are larger, this combination leads to a scenario where our prediction precision for the runtime becomes insufficient to predict the correct optimum. 
+
 
 \begin{figure}[htbp]
     \centering
     \parbox{0.7\textwidth}{\centering\textbf{Energy Cost "U" Pattern}}
     \makebox[\textwidth]{\includegraphics[width=0.7\textwidth]{Plots/example_model_plot.pdf}}
-    \caption{By showing the energy measurements across different clock speeds for only one model, the "U" pattern which is present for all models, becomes even more apparent. In terms of energy cost it is most efficient to run both inference and training tasks at a clock speed of $900$ MHz for all our tested models.}
+    \caption{Looking at the energy measurements across different clock speeds for a single model, the "U" pattern which is present for all models becomes even more apparent. In terms of energy cost it is most efficient to run both inference and training tasks at a clock speed of $900$ MHz for all our tested models.}
     \label{fig:pattern}
 \end{figure}
 
 \section{Predictor Latency}
 
 
-After some more tweaks to make the performance less abysmal, we arrived at a loading time of around 30 seconds for the full set of models used to validate the predictor. These 30 seconds are of in a completely different order of magnitude in terms of execution time compared to preprocessing, prediction of the models or even execution of the models. Realistically, this time is more comparable to having to download a model before being able to benchmark it. The next largest contributor in terms of execution time is preprocessing the dataset in order to format is in a way that can be used as an input for our predictor model. In its current form this step takes somewhere around 500 ms. For the full validation set of 18 model-input sets it takes around 600 ms. For an individual model it takes less than 500 ms. The fact that this step is relatively speaking so slow if unfortunate. This is a result of this being research code which is not optimized. While it is not possible to predict how much headroom for optimization there is, some improvements should be possible, if this were to go to production. \\
-The most important evaluation in terms of predictor execution time is however the execution time of the actual predictor model. Predicting time and energy at a specific clock speed for all model-input sets in the validation set shows very good performance. Across multiple clock speeds and both for the training predictor and the inference predictor the resulting execution time hovers around 30 ms. Even for the scenario with the smallest execution time, inference at maximum clock speed, this still beats the collective execution time of around 300 ms of the validation set by one order of magnitude. And this comparison shifts only further in favor of the predictor model when we look at a still very reasonable scenario of training at a clock speed of 930 MHz. With this the collective execution time is close to 2000 ms, while the predictor time is not affected. Here we have an predictor latency over 60 times lower than performing the measurement instead.
-
-% Here, describe the latency of the predictor model for a few batch sizes and give sensible context to understand the results in.\\
-
-% input data loading from pkl file takes very, very long for many predictions. Around 80 to 90 seconds.\\
-
-% preprocessing takes around 500ms, a little longer for larger inputs, marginally shorter for smaller ones\\
-
-% the prediction itself only takes somewhere in the 5 to 30 ms range even for many predictions at once. 
+After a few more tweaks to improve performance, we arrived at a loading time of around 30 seconds for the full set of models used to validate the predictor. These 30 seconds are in a completely different order of magnitude in terms of execution time compared to preprocessing, prediction of the models or even execution of the models. Realistically, this time is more comparable to having to download a model before being able to benchmark it. The next largest contributor in terms of execution time is preprocessing the dataset in order to format is in a way that can be used as an input for our predictor model. In its current form this step takes somewhere around 500 ms. For the full validation set of 18 model-input sets it takes around 600 ms. For an individual model it takes less than 500 ms. The fact that this step is relatively speaking so slow is unfortunate. This is a result of this being research code which is not optimized. While it is not possible to predict how much headroom for optimization there is, some improvements should be possible, if this were to go to production. \\
+The most important evaluation in terms of predictor execution time is however the execution time of the actual predictor model. Predicting time and energy at a specific clock speed for all model-input sets in the validation set shows very good performance. Across multiple clock speeds and for both for the training predictor and the inference predictor the resulting execution time hovers around 30 ms. Even for the scenario with the smallest execution time, inference at maximum clock speed, this still beats the collective execution time of around 300 ms of the validation set by one order of magnitude. And this comparison shifts only further in favor of the predictor model when we look at a still very reasonable scenario of training at a clock speed of 930 MHz. With this the collective execution time is close to 2000 ms, while the predictor time is not affected. Here we have an predictor latency over 60 times lower than performing the measurement instead.
