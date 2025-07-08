@@ -4,17 +4,19 @@ While the previous contributions provided insight into the building blocks of th
 
 
 \section{Dataset Validation}
-In this first section our focus is to ensure the datasets we collect for training are reasonable accurate. This way we prevent basing our predictions on a training set which is skewed from the very start.
+In this first section our focus is to ensure the datasets we collect for training are reasonable accurate. This is necessary in order to prevent the introduction of a strong bias due to dataset inaccuracies.
+% This way we prevent basing our predictions on a training set which is skewed from the very start.
 % Otherwise we would base our predictions on a training set which might be completely of the mark, defeating the purpose of the predictions from the very start. 
 
 \subsection{Methodology}
-Our approach to validating the datasets is conceptually rather simple. Our measurements of the individual operations should resemble their execution in a DNN. In order to verify this, we compare our measurements of complete DNN executions, to the result summed up from our individually measured operations. \\
-Our measurements for the complete DNN executions are performed using the same pipeline used to measure the individual operations. Using this pipeline is possible because the script can simply view a complete DNN as one larger operation to be profiled.\\
-We also built the script that extracts which unique operations are present in a specific DNN in a way that is also tracks how often each unique operation occurs. This way, we can sum the results from our collected dataset accordingly.
+Our measurements of the individual operations should resemble their execution in a DNN. The only way to ensure this is to compare them to the execution of a complete DNN. Since our operations are building blocks of DNNs, we cannot compare a single operation to a DNN. Rather we sum up our individually measured operations that build up a DNN and compare the resulting sum to a measurement of the complete DNN. \\
+Our measurements for the complete DNN executions are performed using the same pipeline used to measure the individual operations. This is desirable because using the same pipeline for all measurements ensures comparable results. \\
+% Using this pipeline is possible because the script can simply view a complete DNN as one larger operation to be profiled.\\
+We also built the script that extracts which unique operations are present in a specific DNN in a way that is also tracks how often each unique operation occurs. This way, we can sum the results from our collected dataset of operations accordingly.
 
 
 \subsection{Hardware Platforms}
-We begin by looking into our findings for our three original GPU configurations. In a later part we will look into results for different clock speeds.\\
+% We begin by looking into our findings for our three original GPU configurations. In a later part we will look into results for different clock speeds.\\
 The two hardware platforms studied here are the Nvidia RTX 2080 TI and the Nvidia A30. The Nvidia RTX 2080 TI is based upon the Turing architecture from the year 2018 and features 4352 CUDA cores and 544 first generation tensor cores with FP16 support. The Nvidia A30 is based upon the Ampere architecture form the year 2020 and features 3584 CUDA cores and 224 second generation tensor cores with TF32 support.\\
 Given the capability of floating point 32 computation on the A30's tensor cores, we decided to probe its performance characteristics between having its tensor cores enabled and disabled. We cannot make the same differentiation for the 2080TI, because its tensor cores do not support \texttt{FP32}, which we use in all our benchmarks. \\
 This leaves us with three configurations for the dataset validation. The 2080TI with default settings, the A30 with default settings and the A30 with its tensor cores disabled.
@@ -22,13 +24,12 @@ This leaves us with three configurations for the dataset validation. The 2080TI 
 
 \subsection{Results}
 
-\subsubsection{RTX 2080 TI}
-Our results for the 2080TI our findings are not perfect. Agreement between measured and summed results does look rather promising for larger model-input sets. However, for smaller ones, there are instances where the agreement is less than ideal. The model-input sets displaying this behavior are the EfficientNetB0 (32, 3, 224, 224), the ResNet18 (32, 3, 32,32) and the ResNet34 (32, 3, 56, 56). In these instances, the summation overestimates both runtime and energy. However, the overestimation is more pronounced for runtime than for energy.
+% \subsubsection{RTX 2080 TI}
+\textbf{RTX 2080 TI} Our results for the 2080TI our findings are not perfect. Agreement between measured and summed results does look rather promising for larger model-input sets. However, for smaller ones, there are instances where the agreement is less than ideal. The model-input sets displaying this behavior are the EfficientNetB0 (32, 3, 224, 224), the ResNet18 (32, 3, 32,32) and the ResNet34 (32, 3, 56, 56). In these instances, the summation overestimates both runtime and energy. However, the overestimation is more pronounced for runtime than for energy. \\
  
 
-\subsubsection{A30 Tensor Cores Disabled}
-
-Our results for the A30 with its tensor cores disabled are already more precise than the 2080TI's. While the same trends are visible, they are much less pronounced and our summation yields a closer approximations of the measurements overall. 
+% \subsubsection{A30 Tensor Cores Disabled}
+\textbf{A30 Tensor Cores Disable} Our results for the A30 with its tensor cores disabled are already more precise than the 2080TI's. While the same trends are visible, they are much less pronounced and our summation yields a closer approximations of the measurements overall. 
 
 
 \subsubsection{A30 with Tensor Cores Enabled}
