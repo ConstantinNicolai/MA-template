@@ -32,7 +32,7 @@ This leaves us with three configurations for the dataset validation. The 2080TI 
 
 
 \subsection{Uncertainties}
- The standard deviation in our results is very small, both for the summation and for the measurements. It is clear that the discrepancies between the two cannot be solely caused by statistical noise. The larger contributor necessarily are systematic uncertainties which dominate the statistical noise remaining in our measurements. The specific systematic contributors were not identified. Given this situation, statistical errors are ommitted in the evaluations following the dataset validation.
+ The standard deviation in our results is very small, both for the summation and for the measurements. It is clear that the discrepancies between the two cannot be solely caused by statistical noise. The larger contributor necessarily are systematic uncertainties which dominate the statistical noise remaining in our measurements. The specific systematic contributors were not identified. Given this situation, statistical errors are omitted in the evaluations following the dataset validation.
 
 \newcounter{savedpage}
 \setcounter{savedpage}{\value{page}}
@@ -77,7 +77,7 @@ Taking a step back from studying the impact of the tensor cores, there are also 
 We begin by evaluating our prediction model on the operations level. \\
 We are using the implementations from the \texttt{sklearn} library and have investigated XGBRegressor, ExtraTreesRegressor and RandomForestRegressor to use as our prediction model. Initial tests showed clearly that ExtraTreesRegressor performed worse than the others in terms of predictive power, so we focused on the other two. \\
 We chose to use the coefficient of determination, also known as $R^2$, as our metric to evaluate the prediction accuracy. It ranges from $0$ to $1$, with $1$ indicating that the regression fits the data perfectly. \\
-In order to provide a more well rounded representation, both the $R^2$ score for a test set seperate from the training set, as well as the mean $R^2$ score for a 15 fold cross validation are given. \\
+In order to provide a more well rounded representation, both the $R^2$ score for a test set separate from the training set, as well as the mean $R^2$ score for a 15 fold cross validation are given. \\
 The inference and training datasets are conceptually separate and measured independently, therefore the prediction models are separate as well. Naturally, their evaluation is split up too.
 
 
@@ -126,7 +126,7 @@ Both the $R^2$ score results as well as the visual interpretation tell a similar
 \subsection{Inference A30}
 
 The resulting values for the model predicting inference performance can be found in Table \ref{tab:pred_res_inf}. Our resulting $R^2$ scores agree with the ones for the training model. \\
-The slightly lower scores of the runtime model with XGBoost and the random forest test set score are explained by inherent uncertainties. However one possible explanation going beyond uncertainy originates from the smaller absolute runtimes for inference. Smaller runtimes with the same measurement methodology result in similar absolute uncertainties and therefore in larger relative uncertainties. These larger relative uncertainties cause the slightly weaker predictive performance we observe for the inference predictor.\\
+The slightly lower scores of the runtime model with XGBoost and the random forest test set score are explained by inherent uncertainties. However one possible explanation going beyond uncertainty originates from the smaller absolute runtimes for inference. Smaller runtimes with the same measurement methodology result in similar absolute uncertainties and therefore in larger relative uncertainties. These larger relative uncertainties cause the slightly weaker predictive performance we observe for the inference predictor.\\
 % If we were to attribute the lower predictive performance of the runtime model with XGBoost and for the random forest model test set score to more than the inherent uncertainty, it might be explained by the smaller absolute runtimes for inference. Smaller runtimes with the same measurement methodology should result in similar absolute uncertainties and therefore in larger relative uncertainties. These larger relative uncertainties might play a part in the slightly weaker predictive performance we observe for the inference predictor.\\
 All power model scores both for the random forest model, as well we the XGBoost model show identical performance to the training model, taking into consideration the additional uncertainty introduced by the random seed affecting the predictive performance slightly. \\
 Given the very similar results, both in these metrics and in the visual interpretation of Figure \ref{fig:testsetops_inf}, our conclusions for the inference model are the same as for the training model. The lower predictive power of the runtime model compared to the power model will result in a limit of its suitable applications, but it remains application dependent. 
@@ -165,7 +165,7 @@ Test Set $R^2_{power}$ & $0.9853$ & $0.9895$ \\
 
 \subsection{Training RTX2080TI}
 
-The prediction model for the RTX2080TI does not provide predictions for specific clock speeds. Instead it is trained on a dataset collected running the GPU in its default configuration. The prediction performance is not as strong as for the A30. The results can be seen in table \ref{tab:pred_res_2080}. This predictor breaks the pattern of XGBoost performing slightly better. Here we find some cases where it performs better and some where it performs worse. A possible explenation for this is the property of random forest models of generalizing pretty well, even with smaller amounts of training data. This is the case here, since this is a dataset only for the default auto clock speed. 
+The prediction model for the RTX2080TI does not provide predictions for specific clock speeds. Instead it is trained on a dataset collected running the GPU in its default configuration. The prediction performance is not as strong as for the A30. The results can be seen in table \ref{tab:pred_res_2080}. This predictor breaks the pattern of XGBoost performing slightly better. Here we find some cases where it performs better and some where it performs worse. A possible explanation for this is the property of random forest models of generalizing pretty well, even with smaller amounts of training data. This is the case here, since this is a dataset only for the default auto clock speed. 
 In comparison, the A30 datasets are six times as large, because they cover six different clock speeds.
 
 \begin{table}[h!]
