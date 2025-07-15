@@ -7,7 +7,7 @@ The global increase in usage of machine learning applications
 both industry and the private sector. The unfathomably
 large energy costs tied to this broader adoption have
 already prompted a change in public sentiment towards
- energy energy infrastructure. Plans for building
+energy infrastructure. Plans for building
 trillion-dollar data centers are emerging, necessitating
 the re-commissioning of previously decommissioned
 nuclear power plants, which were originally phased
@@ -21,10 +21,15 @@ insight into the roots of the energy costs in order to
 optimize future developments on an informed basis. \\
 In order to facilitate a more informed pairing of workload 
 and GPU we introduce a framework to help guide the decision 
-towards an optimal choice. This way regardless whether 
-the fastest execution or the smallest energy footprint is 
-desired, the informed choice enabled by our framework
-prevents wasteful computation.
+towards an optimal choice. Allowing for optimization towards the fastest execution time or the smallest energy footprint, our framework enables an informed choice which prevents wasteful computation by optimizing for energy when execution time is not critical. 
+
+% This helps in preventing wasteful computation by allowing to optimize for fastest execution time only when necessary and otherwise optimizing for the smallest energy footprint. Regardless whether in optimizing for time or energy, it also allows for an optimized choice between the included GPUs. 
+
+% This way regardless whether 
+% the fastest execution or the smallest energy footprint is 
+% desired, the informed choice enabled by our framework
+% prevents wasteful computation.
+
 % Therefore we are taking a closer look at the making
 % up of these omnipresent machine learning models and
 % will perform a quantitative study of the operations that
@@ -32,21 +37,20 @@ prevents wasteful computation.
 
 \section{Problem Statement}
 While a considerable amount of previous work has been done in
-profiling and prediction of neural network performance, no prior
-work covers the same cases and performance metrics targeted in this work.
-Therefore, our study investigates both training and inference cases 
-covering both execution time and power consumption. \\
-This contribution is valuable because in most cases where a new model
-architecture is designed or an existing architecture is adapted, 
-both the training and the inference efficiency are relevant at some
-point of the models lifespan. At the same time, latency or power 
-envelope requirements may be fluent between the training and
-inference stages, necessitating the study of both performance metrics.
+profiling and prediction of neural network performance, no prior work covers both execution time and power consumption across training and inference.\\
+%no prior work covers the same cases and performance metrics targeted in this work.
+% Therefore, our study investigates both training and inference cases 
+% covering both execution time and power consumption. \\
+However in most cases where a new model architecture is designed or an existing architecture is adapted, both the training and the inference efficiency are relevant at some point in the model's lifespan. As training is typically performed in datacenters, it can be both time-constrained by long execution times and strict deadlines, as well as energy-constrained by infrastructure limitations in cooling capabilities and energy budget. Inference on the other hand can be latency-constrained by real-time applications but also energy-constrained by mobile or embedded devices. 
+
+% At the same time, latency or power 
+% envelope requirements may be different between the training and
+% inference stages, necessitating the study of both performance metrics.
 
 
 \section{Scope}
 The intended scope for this thesis is collecting a dataset, validating the usability of said dataset, using it to perform predictions and lastly evaluating the quality of the predictions. \\
-In practice there are also limitations of the scope in terms of which hardware and which neural networks are included in the study. Here the hardware is limited to the Nvidia RTX 2080 TI and the Nvidia A30. The neural networks in use are all part of the Pytorch Torchvision library. \\
+In practice there are also limitations of the scope in terms of which hardware and which neural networks are included in the study. Here the hardware is limited to the Nvidia RTX 2080 TI and the Nvidia A30. The neural networks in use are all part of the Pytorch Torchvision library\footnote{\url{https://docs.pytorch.org/vision/0.22/}}. \\
 Lastly, due to the grid-search like nature of the study, there are points in the grid where some incompatabilities occurs. This may be a model which does not fit onto a GPU or a benchmark which takes a prohibitive amount of time for a specific setting. Given the amount of troubleshooting necessary to find workarounds for all these edge cases of little practical applicability, we take the freedom of not taking them into the scope of this work.
 
 

@@ -17,38 +17,38 @@ situation.
 
 \section{Related Work}
 Kaufmann et al. take an approach of performance modeling by means of the computation graph. They are
-however limited to the Google Tensor Processing Unit in this work. \\
+however limited to the Google Tensor Processing Unit in this work \cite{kaufman_learned_2021}. \\
 Justus et al. take an approach exploiting the modular and repetitive nature of DNNs. Given the same operations
-are repeated over and over in training, often only varying in a few key paramters, these execution time for
+are repeated over and over in training, often only varying in a few key parameters, the execution time for
 these base building blocks is measured. This is then done for one batch in the training process and
 generalized to the whole training process from there. There is however no presentation of the 
-methodology for the execution time measurements. \\
+methodology for the execution time measurements \cite{justus_predicting_2018}. \\
 Qi et al. present PALEO which employs an analytical approach towards predicting the execution for both
 training and inference of deep neural networks. The analytical approach brings both advantages and disadvantages
 with it. It does not require a dataset of measured execution times as a training set in the same way many 
 other works do, but on the other hand it also is based on more fixed assumptions about the DNN execution 
-than a more data driven approach. \\
-Wang et al. approach with a mult-layer regression model to predict execution time for training and inference.
-Their work is however rather limited in terms of hardware targets and different DNNs studied. \\
+than a more data driven approach \cite{qi_paleo_2017}. \\
+Wang et al. approach with a multi-layer regression model to predict execution time for training and inference.
+Their work is however rather limited in terms of hardware targets and different DNNs studied \cite{wang_perfnet_2020}. \\
 Cai et al. focus their work, NeuralPower, on CNNs running on GPUs. For each target GPU, they collect
 a dataset and fit a sparse polynomial regression model to predict power, runtime, and energy consumption.
 While NeuralPower achieves good results, its usefulness has become limited due to its exclusive focus on 
-CNNs, as other DNN architectures have grown in popularity. \\
+CNNs, as other DNN architectures have grown in popularity \cite{cai_neuralpower_nodate}. \\
 Gianitti et al. also exploit the modular nature of DNNs in their approach. They define a complexity
-metric for each layer type, optionally including backpropagation terms, allowing them to predict
+metric for each layer type, optionally including back propagation terms, allowing them to predict
 execution times for both training and inference. However, their method faces significant limitations,
 as the complexity metric is only defined for a specific set of operations, making it incompatible with
 networks that include layers not covered in the original work. As a result, their approach is essentially
-limited to classic CNN architectures. \\
+limited to classic CNN architectures \cite{gianniti_performance_nodate}. \\
 Velasco-Montero et el. also take the familiar per-layer approach. Their predictions are based on linear
 regression models per type of layer, but again for a specific set of predefined operations. Given their 
-focus on low-cost vision devices these restrictions are reasonable, but limit generalizability. \\
+focus on low-cost vision devices these restrictions are reasonable, but limit generalizability \cite{velasco-montero_previous_2020}. \\
 Sponner et al. take a broad approach in their work. It works in the TVM framework giving it high flexibility
 in target hardware and studied metrics. It is in fact the only work to include execution time, power
-consumption and memory allocation. Given the automated data colletion used to create the dataset basis
+consumption and memory allocation. Given the automated data collection used to create the dataset basis
 for the predictions, there are also few limitations to the networks that can be studied with this. 
 The predictions are based on an extremely randomized tree (ERT) approach with XGBoosting applied. The 
-only major drawback for this work is its limitation to only study inference, due to TVMs limitation to inference.
+only major drawback for this work is its limitation to only study inference, due to TVMs limitation to inference \cite{sponner_ai-driven_2022}. \\
 
 
 
