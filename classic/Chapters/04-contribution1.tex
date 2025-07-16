@@ -15,9 +15,14 @@ This contribution outlines the method used to collect a profiling dataset. The  
 
 
 In order to increase generality our approach exploits the layerwise structure of DNNs. This is achieved by working on the layer level rather than on the model level. In order to be rigorous we need to be clear on the terminology. The workload and its characteristics depend on the layer and its input features, just like it would on the DNN and the input dimensions on the model level. We are interested in the most general objects which have an identical characteristic workload. On the layer level those will be layers with specific input feature dimensions and layer settings. We will refer to these objects as operations. On the model level those will be DNNs with specific input image dimensions, which we will refer to as model-input sets. \\
-The units for which we will make predictions later are individual operations. To this end, we aim to collect a dataset of operations and profile the execution time and power for each one. To ensure that the dataset reflects operations encountered in real-world scenarios, we select a number of representative model-input sets from models of the Torchvision library. The set of operations which we will be profling, is the set of all operations occuring in any of these model-input sets. \\
+A study like this could have been conducted on the model level, the operations level or the kernel level. The model level determines the performance of real-world applications. \\
+We chose the operations level over the kernel level, because it is still close enough to the model level to allow us to infer results for the model level from it. On the other hand, we chose it over the model level itself, because it opens up a wider space of possibilities in all the combinations of operations than the model level ever could, since the model level is always limited to the already known types of models. \\ 
+With these considerations, the units for which we will make predictions later are individual operations. To this end, we aim to collect a dataset of operations and profile the execution time and power for each one. To ensure that the dataset reflects operations encountered in real-world scenarios, we select a number of representative model-input sets from models of the Torchvision library. The set of operations which we will be profling, is the set of all operations occuring in any of these model-input sets. \\
 Extracting this set is automated via scripts, but can just as well be done by hand if so desired. With this set at hand we can dive into the actual profiling.
 
+
+% A study like this could have been conducted on the model level, the operations level or the kernel level. The model level determines the performance of real-world applications. \\
+% We chose the operations level over the kernel level, because it is still close enough to the model level to allow us to infer results for the model level from it. On the other hand, we chose it over the model level itself, because it opens up a wider space of possibilities in all the combinations of operations than the model level ever could, since the model level is always limited to the already known types of models. \\ 
 
 \section{Time Profiling}
 
@@ -30,7 +35,7 @@ For the initialization of the operations we have to be careful to avoid two extr
 
 \subsection{Inference}
 The central difference between inference and training profiling appears in the design of the benchmark function. \\
-For inference profiling we put our operations into \texttt{eval} mode and call the operations within a \texttt{torch.inference\_mode} environment, which is equivalent to the exection in a typical inference forward pass through a model. Within the loop we call the operator on a preinitialized random input tensor for the forward pass. The input tensor is a single instance, as it represents the activations from the previous layer which can be expected to live in high level memory in our memory hierarchy. Since this forward pass is everything we want to profile for inference, this benchmark loop is sufficient.
+For inference profiling we put our operations into \texttt{eval} mode and call the operations within a \texttt{torch.inference\_mode} environment, which is equivalent to the execution in a typical inference forward pass through a model. Within the loop we call the operator on a preinitialized random input tensor for the forward pass. The input tensor is a single instance, as it represents the activations from the previous layer which can be expected to live in high level memory in our memory hierarchy. Since this forward pass is everything we want to profile for inference, this benchmark loop is sufficient.
 
 \subsection{Training}
 For the training profiling we put our operations into \texttt{train} mode and omit the environment used in the inference case. In order to portray the training process for a single operation, we need to run a forward pass and a backward pass. The forward pass is handled identically. In order to execute the backward pass we need a substitute for the gradients flowing backward trough the model. This is achieved by preinitializing a random torch vector with the dimensions of our operation's output which we can then call the backward pass on. Other than that, we only have to make sure the runtime keeps the gradients for all operation instances and keep resetting the input vector gradients for each loop iteration.
@@ -44,13 +49,17 @@ Since we are assuming the number of benchmark iterations and the resulting total
 \input{Plots/startup.tex}
 
 The energy profiling is conducted by measuring the power in watts. Combined with the time measurements this gives us the energy results. \\
-We are starting \texttt{nvidia-smi} as a background process and logging the power readings into a temporary csv file, which is evaluated later in the script to extract the statistics relevant to our purpose. On a higher level abstraction, a second instance of \texttt{nvidia-smi} runs during the complete benchmark process. This log can be compared to the timestamps included in the dataset of profiled operations, in order to investigate surprising annomalies in the results. However, the results relevent to our power profiling are calculated instanly from the temporary csv log file. Due to the nature of our measurement pipeline, some preparations and processing after the fact are necessary to ensure robust results. \\
+We are starting \texttt{nvidia-smi} as a background process and logging the power readings into a temporary csv file, which is used to calculate the operations's power average. \\
+On a higher level abstraction, a second instance of \texttt{nvidia-smi} runs during the complete benchmark process. This log can be compared to the timestamps included in the dataset of profiled operations, in order to investigate surprising annomalies in the results. \\
+Due to the nature of our measurement pipeline, some preparations and processing after the fact are necessary to ensure robust results. \\
 As can be seen in Figure \ref{fig:startup1}, showing the power measurement over time for alternating idle times and benchmark calls, the transition is not instant. There are some power readings in between the steady states of idle and benchmark. \\
 In order to illustrate the existance of a startup effect without idle times between the benchmark runs, Figure \ref{fig:startup2} shows five looped benchmark runs of the same benchmark overlayed. For each run we can observe the startup effect. \\
 We do not want to keep this startup effect in our result, because it is a result of our benchmark execution and not representative of the much more integrated execution pipeline in a neural network.\\
-In order to keep it from affecting our results, we use a $3\sigma$ channel around the initial mean of the power readings and drop everything else. \\
+In order to keep it from affecting our results, we use a $3\sigma$ channel around the initial mean of the power readings and drop everything outside the channel. \\
 As a second precaution, the script also employs some warmup runs in order to further mimimize the impact of the startup effect.\\
 
+
+%However, the results relevant to our power profiling are calculated instantly from the temporary csv log file.
 
 \section{Profiling Evaluation}
 
@@ -120,4 +129,4 @@ The most interesting results here are the time and enery per iteration with thei
 % warmup runs, also applying to time measurement of course
 
 \section{GPU Clocks}
-The last parameter we needed to build a test methodology for is the GPU clock. More precisely the core clock of the GPU. Because using \texttt{nvidia-smi} to change the clock requires lower level permissions, this was done in a seperate script with additional permissions, which was then called from the \texttt{sbatch} script used to run the benchmark. This clocking script takes command line parameters to set the desired clock speed. A range of clock speeds was tested in order to gain insight into the relationships between clock speed, runtime and energy consumption.
+The last parameter we needed to build a test methodology for is the GPU clock. More precisely the core clock of the GPU. A dedicated clocking script\footnote{Because using \texttt{nvidia-smi} to change the clock requires lower level permissions, this was done in a seperate script with additional permissions, which was then called from the \texttt{sbatch} script used to run the benchmark.} takes command line parameters to set the desired clock speed. A range of clock speeds was tested in order to gain insight into the relationships between clock speed, runtime and energy consumption.
