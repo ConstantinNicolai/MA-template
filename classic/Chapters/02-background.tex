@@ -5,28 +5,32 @@
 
 \section{Random Forest Regressor}
 
-In order to introduce the workings of a random forest regressor model, we first define a number of foundational concepts: regression, decision trees, bootstrapping and bagging. On this basis, we can describe the concept of a random forest. \\
-Regression is a supervised learning technique approximating a function to a continuous target variable from a set of input output pairs. In the case of random forests, this function is learned by minimizing the MSE over an ensemble of decision trees. \\
-A decision tree is a predictor which divides up the input space in order to provide specific predictions for each region. In the tree, at each decision node one feature and a corresponding threshhold are chosen to split the input space into two regions. This feature and threshold are chosen by considering all features and many threshholds and identifying the lowest MSE combination. At each leaf node, a prediction value is assigned based on the data points within that region. \\
-Bootstrapping describes the process of sampling with replacement from the training dataset. For each tree in the ensemble, a new training subset is created by randomly sampling data points from the full training dataset, explicitly allowing for duplicates. This results in each tree being trained on a slightly different subset of the training dataset, while preserving the overall data distribution across the ensemble of trees. The ensemble technique of aggregating the results from the independently trained trees is called bagging. For regression tasks, the individual predictions are averaged, which serves to reduce model variance and improve robustness across the ensemble. \\
-The only step necessary to move from standard bagging to a random forest model, is to adapt the building of the decision trees. Instead of considering all features at every decision node, in a random forest only a smaller random subset of features is considered at each node. Introducing randomness within the building of the trees increases variety bewteen the trees. This reduced correlation between individual trees core improvement over the standard bagging approach. The individual trees being more independent results in reduced variance in the average across the ensemble. \\
-The twofold introduction of randomness through bootstrapping and the random forest approach is the key to the overall strengths of the random forest models in strong robustness, little overfitting and good generalization.
+In order to introduce the workings of a random forest regressor model, we first need define to a number of foundational concepts: regression, decision trees, bootstrapping and bagging. On this basis, we can describe the concept of a random forest. \\
+Regression is a supervised learning technique approximating a function to a continuous target variable from a set of input output pairs. In the case of random forests, this function is learned by minimizing the MSE over an ensemble of decision trees \citep{hastie_elements_2009}[p. 10]. \\
+A decision tree is a predictor which divides up the input space in order to provide specific predictions for each region. In the tree, at each decision node one feature and a corresponding threshhold are chosen to split the input space into two regions. This feature and threshold are chosen by considering all features and many threshholds and identifying the lowest MSE combination. At each leaf node, a prediction value is assigned based on the data points within that region \citep{hastie_elements_2009}[p. 307]. \\
+Bootstrapping describes the process of sampling with replacement from the training dataset. For each tree in the ensemble, a new training subset is created by randomly sampling data points from the full training dataset, explicitly allowing for duplicates. This results in each tree being trained on a slightly different subset of the training dataset, while preserving the overall data distribution across the ensemble of trees. \\
+The ensemble technique of aggregating the results from the independently trained trees is called bagging. For regression tasks, the individual predictions are averaged, which serves to reduce model variance and improve robustness across the ensemble. \\
+The only step necessary to move from standard bagging to a random forest model, is to adapt the building of the decision trees. Instead of considering all features at every decision node, in a random forest only a smaller random subset of features is considered at each node. Introducing randomness within the building of the trees increases variety bewteen the trees. This reduced correlation between individual trees is the core improvement over the standard bagging approach. The individual trees being more independent results in reduced variance in the average across the ensemble \citep{hastie_elements_2009}[p. 588]. \\
+The twofold introduction of randomness through bootstrapping and the random forest approach is the key to the overall strengths of the random forest model in strong robustness, little overfitting and good generalization.
 
 
 
 
+\section{XGBoost Regressor}
+
+XGBoost is another tree based ensemble method for regression. In contrast to the random forest regressor, it builds its trees sequentially instead of concurrently like the random forest does. \\
+Classic gradient boosting proceeds by building an initial tree to fit the original targets. For MSE, this is typically the mean of the targets. From then on, it works iteratively. Each subsequent tree is trained to predict the negative partial derivative of the loss with respect to the current prediction. The trees are then added to the ensemble and weighted with a learning rate which determines the contribution of each step and controls the convergence behaviour of the model. \\
+The primary drawback of classic gradient boosting is its tendency to overfit, especially for a larger ensemble of trees. XGBoost builds upon gradient boosting in order to preserve its strengths and improve its generalization. \\
+XGBoost adds regularization terms. L1 regularization encourages sparsity by driving leaf nodes to zero. L2 regularization penalizes large leaf nodes to prevent overfitting. XGBoost often uses a smaller learning rate requiring a larger number of trees, but improving training stability. Another extension is early stopping. XGBoost evaluates performance on a held-out validation set during training, stopping if no further improvement occurs. The more stable training in combination with early stopping helps in preventing overfitting.
 
 
-
-
+\section{removeme}
 
 abbreviations:
 
 DNN - Deep Neural Network
 GPU - Graphics Processing Unit
 MSE - Mean Squared Error
+XGBoost - Extreme Gradient Boosting
 
 
-
-% Bootstrapping describes the process of sampling with replacement. Given we sample a subset of our input space for the first tree, this means we still have an equal chance between finding the input space elements present in our first sample or any other input space element in our second sample. \\
-% Bootstrapping describes the process of sampling with replacement from the training dataset. For each tree in the ensemble, a new training subset is created by randomly sampling data points from the full training dataset, explicitly allowing for duplicates. This results in each tree being trained on a slightly different subset of the training dataset, improving the robustness of the forest while preserving the overall data distribution. \\
