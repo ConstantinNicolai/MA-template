@@ -41,7 +41,7 @@ This leaves us with three configurations for the dataset validation. The 2080TI 
 \setcounter{savedpage}{\value{page}}
 
 
-\includepdf[pages=-, pagecommand={}]{Plots/conference_pages.pdf}
+\includepdf[pages=-, pagecommand={}]{Plots/plot_pages.pdf}
 
 
 
@@ -51,7 +51,7 @@ This leaves us with three configurations for the dataset validation. The 2080TI 
 \subsection{Tensor Core Real-World Impact}
 As can be seen in Figure \ref{fig:tcnotcsmall} and Figure \ref{fig:tcnotclarge} showing the measured energy for the full model-input set runs on all three GPU configurations, tensor cores do have a significant impact on the energy efficiency of running PyTorch models. This is illustrated by the difference between the results for the A30 with tensor cores and without tensor cores. \\
 This difference is more pronounced for smaller model-input sets and appears to become continually smaller for larger and more complex ones. But the difference does not appear to simply be proportional to the model's energy cost either. At first glance and without studying the individual model architectures in detail, it would appear that the difference decreases with the model's dependency complexity. \\
-Dependency complexity is used here to describe both the amount and the depth of dependencies, measured by the number of layers they span, when dependencies go beyond direct, sequential connections between adjacent layers.\\
+In this context, dependency complexity refers to the depth and quantity of dependencies in a model. Depth is defined as the number of layers a dependency spans when it goes beyond a sequential connection between adjacent layers. Skip connections are a prime example of this phenomenon. \\
 When comparing the results for different flavors of ResNets to the results for model architectures with higher dependency complexity such as ConvNext, EfficientNet and DensetNet, it can be seen that the results are much closer for the latter ones, while for the ResNets the tensor cores get to show their potential. \\
 Taking a step back from studying the impact of the tensor cores, there are also interesting findings in comparing the results for the 2080TI to the other GPU configurations. We find worse energy efficiency for the 2080TI compared to the A30 running with tensor cores for all models. When the tensor cores are disabled this trend gets reversed. Overall the difference between the 2080TI and the A30 without tensor cores is smaller than the difference between the 2080TI and the A30 with its tensor cores enabled. However, the pattern of the energy efficiency being best on the A30 with tensor cores, the 2080TI occupying the middle position, and the A30 without tensor cores having the worst energy efficiency remains the same for all model-input sets.
 
