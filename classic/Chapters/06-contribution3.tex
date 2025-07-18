@@ -78,10 +78,19 @@ Taking a step back from studying the impact of the tensor cores, there are also 
 
 % Because the prediction model works on the operations level, we will begin by evaluating it on the operations level. \\
 We begin by evaluating our prediction model on the operations level. \\
-We are using the implementations from the \texttt{sklearn} library and have investigated XGBRegressor, ExtraTreesRegressor and RandomForestRegressor to use as our prediction model. Initial tests showed clearly that ExtraTreesRegressor performed worse than the others in terms of predictive power, so we focused on the other two. \\
-We chose to use the coefficient of determination, also known as $R^2$, as our metric to evaluate the prediction accuracy. It ranges from $0$ to $1$, with $1$ indicating that the regression fits the data perfectly. \\
+We are using the implementations from the \texttt{sklearn} and \texttt{xgboost} libraries and have investigated XGBRegressor\footnote{\href{https://xgboost.readthedocs.io/en/latest/python/index.html}{xgboost XGBRegressor} }, ExtraTreesRegressor\footnote{\href{https://scikit-learn.org/stable/modules/generated/sklearn.ensemble.ExtraTreesRegressor.html}{sklearn Extra Trees Regressor} } and RandomForestRegressor\footnote{\href{https://scikit-learn.org/stable/modules/generated/sklearn.ensemble.RandomForestRegressor.html}{sklearn Random Forest Regressor} } to use as our prediction model. Initial tests showed clearly that ExtraTreesRegressor performed worse than the others in terms of predictive power, so we focused on the other two. \\
+We chose to use the coefficient of determination, also known as $R^2$, as our metric to evaluate the prediction accuracy. \\
 In order to provide a more well rounded representation, both the $R^2$ score for a test set separate from the training set, as well as the mean $R^2$ score for a 15 fold cross validation are given. \\
 The inference and training datasets are conceptually separate and measured independently, therefore the prediction models are separate as well. Naturally, their evaluation is split up too.
+
+
+% \footnote{\href{https://scikit-learn.org/stable/modules/generated/sklearn.ensemble.RandomForestRegressor.html}{sklearn Random Forest Regressor} }
+
+
+% \footnote{\href{https://xgboost.readthedocs.io/en/latest/python/python_api.html#xgboost.XGBRegressor}{xgboost XGBRegressor} }
+
+
+% \footnote{\href{https://scikit-learn.org/stable/modules/generated/sklearn.ensemble.ExtraTreesRegressor.html}{sklearn Extra Trees Regressor} }
 
 
 \subsection{Training A30}
@@ -350,6 +359,5 @@ We do not see this pattern reproduced perfectly by our predictions for the train
 
 \section{Predictor Latency}
 
-
-After improving the performance, we arrived at a loading time of around 30 seconds for the full set of models used to validate the predictor. These 30 seconds are in a completely different order of magnitude in terms of execution time compared to preprocessing, prediction of the models or even execution of the models. Realistically, this time is more comparable to having to download a model before being able to benchmark it. The next largest contributor in terms of execution time is preprocessing the dataset in order to format is in a way that can be used as an input for our predictor model. In its current form this step takes somewhere around 500 ms. For the full validation set of 18 model-input sets it takes around 600 ms. For an individual model it takes less than 500 ms. \\
+Other than the predictor performance in terms of accuracy, its performance in terms of latency is also a concern. The loading of the dataset turned out to be a very time intensive operation. Even after improving the performance, we arrived at a loading time of around 30 seconds for the full set of models used to validate the predictor. These 30 seconds are in a completely different order of magnitude in terms of execution time compared to preprocessing, prediction of the models or even execution of the models. Realistically, this time is more comparable to having to download a model before being able to benchmark it. The next largest contributor in terms of execution time is preprocessing the dataset in order to format is in a way that can be used as an input for our predictor model. In its current form this step takes somewhere around 500 ms. For the full validation set of 18 model-input sets it takes around 600 ms. For an individual model it takes less than 500 ms. \\
 The most important evaluation in terms of predictor execution time is the execution time of the actual predictor model. Predicting time and energy at a specific clock speed for all model-input sets in the validation set shows very good performance. Across multiple clock speeds and for both for the training predictor and the inference predictor the resulting execution time hovers around 30 ms. Even for the scenario with the smallest execution time, inference at maximum clock speed, this is still faster than the collective execution time of around 300 ms of the validation set by one order of magnitude. This comparison shifts only further in favor of the predictor model when we look at a still very reasonable scenario of training at a clock speed of 930 MHz. With this the collective execution time is close to 2000 ms, while the predictor time is not affected. Here we have a predictor latency over 60 times lower than performing the measurement instead.

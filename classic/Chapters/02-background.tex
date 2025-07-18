@@ -19,18 +19,27 @@ The twofold introduction of randomness through bootstrapping and the random fore
 \section{XGBoost Regressor}
 
 XGBoost is another tree based ensemble method for regression. In contrast to the random forest regressor, it builds its trees sequentially instead of concurrently like the random forest does. \\
-Classic gradient boosting proceeds by building an initial tree to fit the original targets. For MSE, this is typically the mean of the targets. From then on, it works iteratively. Each subsequent tree is trained to predict the negative partial derivative of the loss with respect to the current prediction. The trees are then added to the ensemble and weighted with a learning rate which determines the contribution of each step and controls the convergence behaviour of the model. \\
+Classic gradient boosting proceeds by building an initial tree to fit the original targets. When using MSE, this is typically the mean of the targets. From then on, it works iteratively. Each subsequent tree is trained to predict the negative partial derivative of the loss with respect to the current prediction. The trees are then added to the ensemble and weighted with a learning rate which determines the contribution of each step and controls the convergence behaviour of the model \cite{chen_xgboost_2016}. \\
 The primary drawback of classic gradient boosting is its tendency to overfit, especially for a larger ensemble of trees. XGBoost builds upon gradient boosting in order to preserve its strengths and improve its generalization. \\
-XGBoost adds regularization terms. L1 regularization encourages sparsity by driving leaf nodes to zero. L2 regularization penalizes large leaf nodes to prevent overfitting. XGBoost often uses a smaller learning rate requiring a larger number of trees, but improving training stability. Another extension is early stopping. XGBoost evaluates performance on a held-out validation set during training, stopping if no further improvement occurs. The more stable training in combination with early stopping helps in preventing overfitting.
+One improvement is its inclusion of regularization. It uses a leaf weight penalty term which encourages sparsity by driving leaf weights to zero. It also introduces a minimum loss reduction threshold that controls node splitting. In practice that means, if a split does not improve the loss function by at least the threshold amount, no split occurs \cite{chen_xgboost_2016}. XGBoost also often uses a small learning rate which requires a large number of trees, but improves the training stability. Another extension is early stopping. It evaluates performance on a held-out validation set during training, stopping if no further improvement occurs. The combination of the more stable training and the early stopping reduces overfitting.
 
 
-\section{removeme}
-
-abbreviations:
-
-DNN - Deep Neural Network
-GPU - Graphics Processing Unit
-MSE - Mean Squared Error
-XGBoost - Extreme Gradient Boosting
 
 
+\section{Coefficient of Determination}
+
+
+The coefficient of determination, denoted as $R^2$, is a statistical measure used to evaluate the performance of regression models. It measures the proportion of the variance in the dependent variable that is predictable from the independent variables. 
+\begin{equation}
+R^2 = 1 - \frac{\sum_{i=1}^n (y_i - \hat{y}_i)^2}{\sum_{i=1}^n (y_i - \bar{y})^2}
+\end{equation}
+where $y_i$ are the observed values, $\hat{y}_i$ are the predicted values and $\bar{y}$ is the mean of the observed values. \\
+An $R^2$ score of $1$ indicates perfect prediction. A score of $0$ indicates the predictor performs equally to predicting the mean of the training target values. If the model performs worse than predicting the mean, the score can range below $0$. \\
+Before the training process of any model begins, the dataset is split into a training set and a test set. The test set is held out for the final evaluation of the predictive performance on unseen data.
+
+
+\subsection{Cross-Validation $\overline{R^2}$}
+In $k$-fold cross-validation, the training set is partitioned into k subsets called folds. The regressor is trained on $k-1$ folds and the $R^2$ score is evaluated on the remaining fold. This process is repeated $k$ times across all folds. The $k$ scores are then averaged into a CV $\overline{R^2}$. This process only simulates a holdout set without actually interacting with the test set. Therefore it is a measure of how well the model works compared to other models and while it can give an indication of the predictive performance, it is not a conclusive measure its performance.
+
+\subsection{Test Set $R^2$}
+In contrast, the test set $R^2$ score is a measure of the models real-world performance, since its evaluation is performed on a true holdout set. It provides a conclusive measure of the models generalization and its real-world performance.
