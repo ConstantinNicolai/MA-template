@@ -340,10 +340,34 @@ This allows the predictions to be used to determine the optimal clock speed. \\
 \FloatBarrier
 
 \subsection{Patterns and Observations}
-While we are not surprised by the runtime measurement results simply exhibiting shorter runtimes for higher clock speeds, we do find an interesting pattern for the energy measurement results. Both for training and inference we observe a "U" pattern across the clock speeds, see Figure \ref{fig:pattern}. With very high energy costs for very low clock speeds and high energy costs for very high clock speeds as well. But in between, for higher, but not very high clock speeds, we see a minimum for the required energy at a clock speed of $900$ MHz on the A30. More interestingly this pattern remains stable across both training and inference and for all models tested. Therefore, even if there might be models where it is not optimal, it is surely a good rule of thumb to use this as a starting point when energy efficiency is of interest. \\
-When trying to optimize for a balance between energy and runtime, we observe a shift to the right. Looking at the energy delay product, see Figure \ref{fig:grppdpfminf} and Figure \ref{fig:grppdpfmtrain}, we see similar "U" pattern in the measurements, with the optimum at $1200$ MHz across inference and training. \\
-We do not see this pattern reproduced perfectly by our predictions for the training case. Since the runtime has a squared contribution to the energy delay product and the absolute values for training are larger, this combination leads to a scenario where our prediction precision for the runtime becomes insufficient to predict the correct optimum. 
+Given all our profiling data on the A30, we studied the results in search for the emergence of interesting patterns. \\
+We were not surprised to find higher clock speeds resulting in lower runtimes, but apart from this obvious causality we did not find any other curious patterns in our execution time profiling. \\
+We did however find an interesting pattern in our energy profiling. Both for the training and the inference case we observed a "U" pattern across the clock speeds. Figure \ref{fig:pattern} shows very high energy costs for very low clock speeds and high energy costs for very high clock speeds. We find the energy minimum at a more moderate clock speed of $900$ MHz. This pattern remains stable across both training and inference and for all tested models. \\
+The fact that the highest clock speeds are not the most efficient choice is explained by the power consumption formula for transistors \cite{hennessy2017computer}. 
+\begin{equation}
+    P \propto \frac{1}{2} C V^2 f
+\end{equation}
+Where $P$ is the power, $C$ is the capacitative load, $V$ is the voltage and $f$ is the frequency. \\
+For a whole GPU this is scaled by its number of transistors. The proportionality remains intact. In order to maintain stability at the highest clock speed settings, it is necessary to increase the voltage. The squared contribution of the voltage towards the power consumption makes it very sensitive to larger voltages. This is the reason why the highest achievable clock speed is rarely the most efficient one. \\
+We do however observe high energy costs for low clock speeds as well. This is where another effect comes into play. Every GPU has an idle power consumption that is independent of the current workload. This means that because a GPU running a workload at a very low clock speed will take a long time to complete it, a larger fraction of the energy cost will be caused by its idle power consumption. \\
+These two counteracting effects result in the energy optimum lying at neither extreme. So even if a future DNN had a slightly different optimum, the optimum we found here would be a good starting point when optimizing for energy efficiency.\\
+While energy efficiency favors moderate clock speeds, in practice we often require a different balance between energy and runtime optimization. The energy delay product defined in Equation \ref{eq:edp}, quantifies the tradeoff between energy and runtime by squaring the time contribution. Optimizing for the energy delay product shifts our optimum towards a higher clock speed. In Figure \ref{fig:grppdpfminf} and Figure \ref{fig:grppdpfmtrain} we observe a similar "U" pattern in our EDP profiling results, with its optimum at $1200$ MHz across both inference and training. \\
+The shift of the optimum towards higher clock speeds is explained by the definition of the EDP: 
+\begin{equation}\label{eq:edp}
+    \text{Energy Delay Product} = P \cdot t^2
+\end{equation}
+Where $P$ is the power and $t$ is the time. \\
+The optimum is still the result of the same two counteracting effects. However, since the contribution of the time is squared, the optimum moves to a higher clock speed. \\
+Our predictions do not reproduce this pattern perfectly for the training case. Since the runtime has a squared contribution to the EDP and the absolute values for training are larger, this combination leads to a scenario where our prediction precision for the runtime becomes insufficient to predict the correct optimum. 
 
+% At a more moderate clock speed of $900$ MHz, we find an energy minimum. 
+
+% In between, for moderately high clock speeds, we find a minimum for the required energy at a clock speed of $900$ MHz.
+
+
+% While we are not surprised by the runtime measurement results simply exhibiting shorter runtimes for higher clock speeds, we do find an interesting pattern for the energy measurement results. 
+
+% When trying to optimize for a balance between energy and runtime, the optimum shifts towards a higher clock speed. Looking at the energy delay product,
 
 \begin{figure}[htbp]
     \centering
