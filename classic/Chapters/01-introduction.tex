@@ -21,7 +21,7 @@ insight into the roots of the energy costs in order to
 optimize future developments on an informed basis. \\
 In order to facilitate a more informed pairing of workload 
 and GPU we introduce a framework to help guide the decision 
-towards an optimal choice. Allowing for optimization towards the fastest execution time or the smallest energy footprint, our framework enables an informed choice which prevents wasteful computation by optimizing for energy when execution time is not critical. 
+towards an optimal choice. By allowing for optimization towards the fastest execution time or the smallest energy footprint, our framework enables an informed choice which prevents wasteful computation by optimizing for energy when execution time is not critical. 
 
 % This helps in preventing wasteful computation by allowing to optimize for fastest execution time only when necessary and otherwise optimizing for the smallest energy footprint. Regardless whether in optimizing for time or energy, it also allows for an optimized choice between the included GPUs. 
 
@@ -41,7 +41,7 @@ profiling and prediction of neural network performance, no prior work covers bot
 %no prior work covers the same cases and performance metrics targeted in this work.
 % Therefore, our study investigates both training and inference cases 
 % covering both execution time and power consumption. \\
-However in most cases where a new model architecture is designed or an existing architecture is adapted, both the training and the inference efficiency are relevant at some point in the model's lifespan. As training is typically performed in datacenters, it can be both time-constrained by long execution times and strict deadlines, as well as energy-constrained by infrastructure limitations in cooling capabilities and energy budget. Inference on the other hand can be latency-constrained by real-time applications but also energy-constrained by mobile or embedded devices. 
+However in most cases where a new model architecture is designed or an existing architecture is adapted, both the training and the inference efficiency are relevant at some point in the model's lifespan. As training is typically performed in datacenters, it can be both time-constrained by long execution times and strict deadlines, as well as energy-constrained by infrastructure limitations in cooling capabilities and energy budget. Inference on the other hand can be latency-constrained by real-time applications but also energy-constrained on mobile or embedded devices. 
 
 % At the same time, latency or power 
 % envelope requirements may be different between the training and
@@ -49,36 +49,48 @@ However in most cases where a new model architecture is designed or an existing 
 
 
 \section{Scope}
-The intended scope for this thesis is collecting a dataset, validating the usability of said dataset, using it to perform predictions and lastly evaluating the quality of the predictions. \\
-In practice there are also limitations of the scope in terms of which hardware and which neural networks are included in the study. Here the hardware is limited to the Nvidia RTX 2080 TI and the Nvidia A30. The neural networks in use are all part of the Pytorch Torchvision library\footnote{\url{https://docs.pytorch.org/vision/0.22/}}. \\
-Lastly, due to the grid-search like nature of the study, there are points in the grid where some incompatabilities occurs. This may be a model which does not fit onto a GPU or a benchmark which takes a prohibitive amount of time for a specific setting. Given the amount of troubleshooting necessary to find workarounds for all these edge cases of little practical applicability, we take the freedom of not taking them into the scope of this work.
+
+The intended scope for this thesis is to collect a dataset, validate its usability, use it to perform predictions and evaluate the prediction quality. \\
+Practical constraints narrowed our study to the Nvidia RTX 2080 TI and the A30 GPUs and to the models available in the Pytorch Torchvision library\footnote{\url{https://docs.pytorch.org/vision/0.22/}}. \\
+The grid-search approach across the parameters revealed some inherent incompatabilities, such as models too large to fit the GPU memory or benchmarks resulting in prohibitively long runtimes due to edge case parameters combinations. Rather than troubleshooting every edge case, we decided to prioritize more practical configurations and to exclude edge cases of limited practical relevance.
+% The intended scope for this thesis is collecting a dataset, validating the usability of said dataset, using it to perform predictions and lastly evaluating the quality of those predictions. \\
+% In practice there are also limitations of the scope in terms of which hardware and which neural networks are included in the study. The hardware is limited to the Nvidia RTX 2080 TI and the Nvidia A30. The neural networks in use are all part of the Pytorch Torchvision library\footnote{\url{https://docs.pytorch.org/vision/0.22/}}. \\
+% Lastly, due to the grid-search like nature of the study, there are points in the grid where incompatabilities occur. These can be a model which does not fit onto a GPU or a benchmark which takes a prohibitive amount of time for a specific setting. Given the amount of troubleshooting necessary to find workarounds for all possible edge cases, we take the freedom of excluding the ones of lesser practical applicability from the scope of this work.
+
+
+% of little practical applicability, we take the freedom of not taking them into the scope of this work.
 
 
 \section{Contributions Overview}
 \subsection{Dataset Collection}
-In our first contribution we introduce our method for collecting 
-profiling data and creating a coherent dataset by processing the 
-collected data.\\
-The profiling measurement is executed via a python script, utilizing
-the Pytorch Benchmark 
-library\footnote{\url{https://pytorch.org/tutorials/recipes/recipes/benchmark.html}}
-to conduct the execution time measurements. The power measurements
-are conducted using the command-line tool 
-nvidia-smi\footnote{\url{https://docs.nvidia.com/deploy/nvidia-smi/index.html}}
-being run in the background while the benchmark is performed.\\
-In order to enable repeatability, the execution times and power readings
-along with their respective measurement errors are stored together with the
-Pytorch objects for profiled operations, along with a sensible selection of
-related metrics.
+
+The first contribution introduces a method for automated profiling data collection and processing into a coherent dataset.\\
+In order to ensure repeatability, the time and power readings along with a number of key related metrics are stored together with the Pytorch objects of the profiled operations. \\
+The profiling measurements are executed via a python script that utilizes the Pytorch Benchmark library\footnote{\url{https://pytorch.org/tutorials/recipes/recipes/benchmark.html}} to conduct the time measurements. The power profiling is conducted by running nvidia-smi\footnote{\url{https://docs.nvidia.com/deploy/nvidia-smi/index.html}} in the background during the benchmark execution. 
+
+
+% the execution times, power readings and a number of related metrics are stored together with the
+% Pytorch objects of the profiled operations.
+%  The power measurements are conducted using nvidia-smi\footnote{\url{https://docs.nvidia.com/deploy/nvidia-smi/index.html}} that is running in the background while the benchmark is performed.\\
+% , along with a sensible selection of
+% related metrics.
+% In our first contribution we introduce our method for collecting 
+% profiling data and creating a coherent dataset by processing the 
+% collected data.\\
+% along with their respective measurement errors
 
 \subsection{Prediction Model}
-In our second contribution we present our prediction model. Based on the predictions
-for the operations occurring in a neural network we can infer a prediction for the 
-complete network. We can therefore provide insight into which of the studied GPUs
-is most suitable for a given neural network, depending on the metric of interest.
-This way we can identify both the GPU which can execute the neural network in the
-fastest time, and the GPU which results in the smallest energy consumption and
-accompanying heat output.
+The second contribution presents our prediction model. By aggregating the predictions for the individual operations of a neural network, we can infer predictions for the complete DNN. This allows us to identify which GPU will have the shortest execution time and which one the smallest energy footprint for any given DNN architecture. 
+
+% For several metrics of interest, our predictions provide insights helping to choose the most suitable GPU for a given neural network. 
+
+% In our second contribution we present our prediction model. Based on the predictions
+% for the operations occurring in a neural network we can infer a prediction for the 
+% complete network. We can therefore provide insight into which of the studied GPUs
+% is most suitable for a given neural network, depending on the metric of interest.
+% This way we can identify both the GPU which can execute the neural network in the
+% fastest time, and the GPU which results in the smallest energy consumption and
+% accompanying heat output.
 
 \subsection{Validation}
 In our third and final contribution we investigate the quality of our dataset of
