@@ -92,7 +92,7 @@ The following section explains the details of how we arrive at our results from 
 \end{verbatim}
 % \end{small}
 
-Let us begin with the power evaluation. The log file is read in via \texttt{pandas}\footnote{\href{https://pandas.pydata.org/}{pandas}}. Any existing rows containing a non-numerical value are dropped from the dataframe. We then find the standard deviation for the power and drop all rows containing a power reading outside a $3 \: \sigma $ range. The following formulae for the mean and standard deviation are used:
+Let us begin with the power evaluation. The log file is read in via \texttt{pandas}\footnote{\href{https://pandas.pydata.org/}{pandas}}. Any existing rows containing a non-numerical value are dropped from the dataframe. We then find the standard deviation for the power and drop all rows containing a power reading outside a $3 \: \sigma $ range. The following formulae are used for the mean and standard deviation:
 
 \begin{equation}
 \overline{W} = \frac{1}{n} \sum_{i=1}^{n} W_i
@@ -143,4 +143,4 @@ The most interesting results here are the time and enery per iteration with thei
 % warmup runs, also applying to time measurement of course
 
 \section{GPU Clocks}
-The last parameter we needed to build a test methodology for is the GPU clock. More precisely the core clock of the GPU. A dedicated clocking script\footnote{Because using \texttt{nvidia-smi} to change the clock requires lower level permissions, this was done in a seperate script with additional permissions, which was then called from the \texttt{sbatch} script used to run the benchmark.} takes command line parameters to set the desired clock speed. A range of clock speeds was tested in order to gain insight into the relationships between clock speed, runtime and energy consumption.
+The last parameter we needed to build a test methodology for is the GPU core clock. A dedicated clocking script\footnote{Because using \texttt{nvidia-smi} to change the clock requires lower level permissions, this was done in a seperate script with additional permissions, which was then called from the \texttt{sbatch} script used to run the benchmark.} takes command line parameters to set the desired clock speed. A range of clock speeds was tested in order to gain insight into the relationships between clock speed, runtime and energy consumption.

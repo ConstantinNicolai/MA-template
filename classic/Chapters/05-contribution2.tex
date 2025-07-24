@@ -1,27 +1,14 @@
 \chapter{Prediction}\label{chap:contrib2}
 
-In this chapter we will introduce our model for providing predictions based on the collected dataset. We will go into the idea and decisions in creating it in this specific way and provide insight into the implementation.
+In this chapter we will introduce the regression model used for providing predictions based on the collected dataset. We will go into the idea and decisions in creating it in this specific way and provide insight into the implementation.
 
 
 \section{Model Selection}
-Since we are interested in time and energy, we need two prediction models. More precisely, we need one for runtime predictions and one for power predictions. By multiplying the two predictions we obtain our energy prediction. \\
-In order to retain as much understanding of the prediction process as we can while ensuring tolerable execution times for the prediction times, we do not want to use a full DNN to perform the predictions. Instead we are looking for a more lightweight solution, closer to classical statistics. These requirements led us to using a random forest predictor model. It is both lightweight and sets restrictions to its input which force us to format our dataset in a way that provides some insight into cause and effect for the predictions. \\
-From the same family of tree based ensemble methods, we also ran some tests with Extremely Randomized Trees, but did not find improved results results. \\
-A similar attempt was made with Extreme Gradient Boosting. Using XGBoost resulted in similar performance to the random forest model. Both models outperformed the other one is some scenarios. For the sake of simplicity we will continue forward with the random forest model. It is more simple in concept and exhibits better scalability characteristics due to its inherent parallelisation.
-
-
-
-
-% This did result in comparable to slightly improved prediction performance compared to the random forest model. However, we expect increased training time for this method and only discovered the slightly improved performance very late in the process. For these reasons we did not switch the complete evaluation to a new model at that point. We would recommend further investigation into using this method for future work.
-% We therefore continued with the less complex random forest. A similar attempt was made with Extreme Gradient Boosting, but this also did not provide and increase in prediction accuracy justifying the increased training time. While we did not observe any reason to use on of these methods, we do not want to dissuade others from doing so. Switching around between the methods is relatively simple, due to the provided implementations from sci-py, and the fact, that we did not find improvements using them on our dataset does not necessarily have to mean there are no benefits when studying a different dataset.
-
-
-
-
-
-% \begin{verbatim}
-% [0 1 3 1 64 1 7.0 7.0 1.0 3.0 3.0 1.0 2.0 2.0 1.0 -1 0 -1 0 -1 0 -1 0 -1.0 0 -1.0 0 -1 0 -1.0 0 -1.0 0.0 -1.0 0.0 -1.0 0.0 -1.0 0.0 -1.0 -1.0 0.0 False False False True False False False False False False False False 32.0 1.0 3.0 1.0 224.0 1.0 224.0 1.0 1440]
-% \end{verbatim}
+Since we are interested in predicting time and energy, we need two dedicated prediction models. More precisely, we need one model for runtime predictions and one for power predictions. By multiplying the two predictions we obtain our energy predictions. \\
+In order to enable sufficient interpretability of the predictions, a high level of transparency into the prediction process is desirable. At the same time, we need to limit the predictor latency to ensure using the predictor exhibits lower latency than simply profiling the same workload instead. \\
+Since using a DNN as our predictor fails to meet those requirements, we decided to use a random forest regressor. It includes decision paths allowing the interpretation of individual predictions and feature importance metrics which provide insight into the overall predictor behavior. Additionally it is also a computationally much more lightweight solution, because it utilizes orders of magnitude fewer parameters. \\
+From the same family of tree based ensemble methods, we also ran some tests with an extremely randomized trees regressor, but did not find improved prediction results over the random forest. \\
+A similar attempt was made with an extreme gradient boosting regressor. Using XGBoost resulted in similar performance to the random forest model. Each model outperformed the other one is some settings. For the sake of simplicity we will continue forward with the random forest model. It is both simpler in concept and exhibits better scalability characteristics due to its inherent parallelisation.
 
 
 
