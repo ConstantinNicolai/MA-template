@@ -1,10 +1,12 @@
 \chapter{Validation}\label{chap:contrib3}
 
-While the previous contributions provided insight into the building blocks of this work, this chapter will serve to present its results. By providing quantitative results we can validate the methodology and provide an informed impression of both its capabilities and limitations. 
+While the previous contributions provided insight into the building blocks of this work, this chapter will serve to present its results. By providing quantitative results we are validating the methodology and providing an informed impression of both its capabilities and limitations. 
 
 
 \section{Dataset Validation}
-In this first section our focus is to ensure the datasets we collect for training are reasonable accurate. This is necessary in order to prevent the introduction of a strong bias due to dataset inaccuracies.
+Our focus in this first section is to ensure the datasets we collect for the training of our predictors are reasonably accurate. This prevents the introduction of a strong bias due to dataset inaccuracies.
+
+% In this first section our focus is to ensure the datasets we collect for training are reasonable accurate. This is necessary in order to prevent the introduction of a strong bias due to dataset inaccuracies.
 % This way we prevent basing our predictions on a training set which is skewed from the very start.
 % Otherwise we would base our predictions on a training set which might be completely of the mark, defeating the purpose of the predictions from the very start. 
 
@@ -13,7 +15,7 @@ In this first section our focus is to ensure the datasets we collect for trainin
 Our measurements of the individual operations should resemble how they behave when executed within a complete DNN. Since our individual operations are merely 
 building blocks, we cannot compare them directly to the entire neural network. Instead, we aggregate the measurements of the operations which compose the DNN and compare that total to the execution of the full model for validation. \\
 Our measurements for the complete DNN executions are performed using the same pipeline used to measure the individual operations. This is desirable because using the same pipeline for all measurements ensures comparable results. \\
-We also built a script that extracts which unique operations are present in a specific DNN in a way that it also tracks how often each unique operation occurs. This way, we can sum the results from our collected dataset of operations accordingly.
+We also built a script that extracts which unique operations are present in a specific DNN in a way which also tracks how often each unique operation occurs. This way, we can sum the results from our collected dataset of operations accordingly.
 
 
 % Using this pipeline is possible because the script can simply view a complete DNN as one larger operation to be profiled.\\
@@ -21,21 +23,27 @@ We also built a script that extracts which unique operations are present in a sp
 \subsection{Hardware Platforms}
 % We begin by looking into our findings for our three original GPU configurations. In a later part we will look into results for different clock speeds.\\
 The two hardware platforms studied here are the Nvidia RTX 2080 TI and the Nvidia A30. The Nvidia RTX 2080 TI is based upon the Turing architecture from the year 2018 and features 4352 CUDA cores and 544 first generation tensor cores with \texttt{FP16} support. The Nvidia A30 is based upon the Ampere architecture form the year 2020 and features 3584 CUDA cores and 224 second generation tensor cores with \texttt{TF32} support.\\
-Given the capability of working with \texttt{FP32} values using the \texttt{TF32} datatype on the A30, we decided to probe its performance characteristics between having its tensor cores enabled and disabled. We cannot make the same differentiation for the 2080TI, because its tensor cores do not support \texttt{FP32}, which we use in all our benchmarks. \\
+Given the capability of working with \texttt{FP32} values using the \texttt{TF32} datatype on the A30, we decided to probe its performance characteristics between having its tensor cores enabled and disabled. We cannot make the same differentiation for the 2080TI, because its tensor cores do not support \texttt{FP32} native nor \texttt{TF32} and all our benchmarks use FP32 values. \\
 This leaves us with three configurations for the dataset validation. The 2080TI with default settings, the A30 with default settings and the A30 with its tensor cores disabled.
 
 
 \subsection{Results}
 
 % \subsubsection{RTX 2080 TI}
-\textbf{RTX 2080 TI} Our results for the 2080TI are mixed. Agreement between measured and summed results does look rather promising for larger model-input sets. However, for smaller ones, there are instances where the agreement weaker. The model-input sets displaying this behavior are the EfficientNetB0 (32, 3, 224, 224), the ResNet18 (32, 3, 32,32) and the ResNet34 (32, 3, 56, 56). In these instances, the summation overestimates both runtime and energy. However, the overestimation is more pronounced for runtime than for energy. \\
+\textbf{RTX 2080 TI} Our results for the 2080TI are mixed. Agreement between measured and summed results does look rather promising for larger model-input sets. However, for smaller ones, there are instances where the agreement is weaker. The model-input sets displaying this behavior are the EfficientNetB0 (32, 3, 224, 224), the ResNet18 (32, 3, 32,32) and the ResNet34 (32, 3, 56, 56). In these instances, the summation overestimates both runtime and energy. However, the overestimation is more pronounced for runtime than for energy. \\
 \textbf{A30 Tensor Cores Disabled} Our results for the A30 with its tensor cores disabled are already more precise than the 2080TI's. While the same trends are visible, they are much less pronounced and our summation yields a closer approximations of the measurements overall. \\
 \textbf{A30 with Tensor Cores Enabled} Our results for the A30 with its tensor cores enabled are very promising. While the earlier trends did not completely vanish, they are even less pronounced than for the A30 with disabled tensor cores. This hardware configuration yielded the most precise summation of the three configurations.
 
 
 
 \subsection{Uncertainties}
- The standard deviation in our results is very small, both for the summation and for the measurements. It is clear that the discrepancies between the two cannot be solely caused by statistical noise. The larger contributor necessarily are systematic uncertainties which dominate the statistical noise remaining in our measurements. The specific systematic contributors were not identified. Given this situation, statistical errors are omitted in the evaluations following the dataset validation.
+The standard deviation in our results is very small, both for the summation and for the measurements. It is clear that the discrepancies between the two cannot be solely caused by statistical noise. Systematic uncertainties are the larger contributor which dominates the remaining statistical noise in our measurements. For this reason, statistical errors are omitted in the evaluations following the dataset validation. The wide range of potential systematic sources makes the identification of specific systematic contributors very difficult. Since that was not required for the performance assessment of our predictor models it was not the focus of this project. 
+
+% and was not the focus of this project. The prediction performance evalutation 
+
+
+%  The specific systematic contributors were not able to be identified, because the wide range of potential sources made this task very difficult.
+
 
 \newcounter{savedpage}
 \setcounter{savedpage}{\value{page}}
@@ -77,11 +85,14 @@ Taking a step back from studying the impact of the tensor cores, there are also 
 % \subsection{Operations Level}
 
 % Because the prediction model works on the operations level, we will begin by evaluating it on the operations level. \\
-We begin by evaluating our prediction model on the operations level. \\
-We are using the implementations from the \texttt{sklearn} and \texttt{xgboost} libraries and have investigated XGBRegressor\footnote{\href{https://xgboost.readthedocs.io/en/latest/python/index.html}{xgboost XGBRegressor} }, ExtraTreesRegressor\footnote{\href{https://scikit-learn.org/stable/modules/generated/sklearn.ensemble.ExtraTreesRegressor.html}{sklearn Extra Trees Regressor} } and RandomForestRegressor\footnote{\href{https://scikit-learn.org/stable/modules/generated/sklearn.ensemble.RandomForestRegressor.html}{sklearn Random Forest Regressor} } to use as our prediction model. Initial tests showed clearly that ExtraTreesRegressor performed worse than the others in terms of predictive power, so we focused on the other two. \\
-We chose to use the coefficient of determination, also known as $R^2$, as our metric to evaluate the prediction accuracy. \\
+We begin our evaluation of the prediction performance by evaluating our prediction model on the operations level. \\
+We are using the implementations from the \texttt{sklearn} and \texttt{xgboost} libraries and have investigated XGBRegressor\footnote{\href{https://xgboost.readthedocs.io/en/latest/python/index.html}{xgboost XGBRegressor} }, ExtraTreesRegressor\footnote{\href{https://scikit-learn.org/stable/modules/generated/sklearn.ensemble.ExtraTreesRegressor.html}{sklearn Extra Trees Regressor} } and RandomForestRegressor\footnote{\href{https://scikit-learn.org/stable/modules/generated/sklearn.ensemble.RandomForestRegressor.html}{sklearn Random Forest Regressor} } for use as our prediction model. Initial tests showed clearly that ExtraTreesRegressor performed worse than the others in terms of predictive power, so we focused on the other two. \\
+We chose to use the coefficient of determination ($R^2$, \ref{R2}) as our metric to evaluate the prediction accuracy. \\
 In order to provide a more well rounded representation, both the $R^2$ score for a test set separate from the training set, as well as the mean $R^2$ score for a 15 fold cross validation are given. \\
-The inference and training datasets are conceptually separate and measured independently, therefore the prediction models are separate as well. Naturally, their evaluation is split up too.
+The inference and training datasets are conceptually separate and measured independently. Therefore, the prediction models and their evaluation are seperate as well.
+
+
+% therefore the prediction models are separate as well. Naturally, their evaluation is split up too.
 
 
 % \footnote{\href{https://scikit-learn.org/stable/modules/generated/sklearn.ensemble.RandomForestRegressor.html}{sklearn Random Forest Regressor} }
@@ -105,16 +116,37 @@ The inference and training datasets are conceptually separate and measured indep
 \hline
 CV $\overline{R^2}_{time}$ & $0.876 \pm 0.073$ &  $0.912 \pm 0.04$ \\
 \hline
-Test Set $R^2_{time}$ & $0.9036$ & $0.9018$ \\
+Test Set $R^2_{time}$ & $0.90$ & $0.90$ \\
 \hline
 CV $\overline{R^2}_{power}$ & $0.977 \pm 0.007$  &  $0.985 \pm 0.003$\\
 \hline
-Test Set $R^2_{power}$ & $0.9797$ & $0.9868$ \\
+Test Set $R^2_{power}$ & $0.98$ & $0.99$ \\
 \hline
 \end{tabular}
-\caption{Operations level results for the random forest and XGBoost A30 predictors. Cross validation and test set score are in close agreement.}
+\caption{Operations level results for the random forest and XGBoost A30 predictors. Cross validation slightly favors XGBoost but the test set scores are stable across both regressors.}
 \label{tab:pred_res}
 \end{table}
+
+
+
+% \begin{table}[h!]
+% \centering
+% \begin{tabular}{|c|c|c|}
+% \hline
+%  \textbf{Training A30}& \textbf{Random Forest} & \textbf{XGBoost} \\
+% \hline
+% CV $\overline{R^2}_{time}$ & $0.876 \pm 0.073$ &  $0.912 \pm 0.04$ \\
+% \hline
+% Test Set $R^2_{time}$ & $0.9036$ & $0.9018$ \\
+% \hline
+% CV $\overline{R^2}_{power}$ & $0.977 \pm 0.007$  &  $0.985 \pm 0.003$\\
+% \hline
+% Test Set $R^2_{power}$ & $0.9797$ & $0.9868$ \\
+% \hline
+% \end{tabular}
+% \caption{Operations level results for the random forest and XGBoost A30 predictors. Cross validation and test set score are in close agreement.}
+% \label{tab:pred_res}
+% \end{table}
 
 
 % These operations level results for this predictor are very good. With scores of around $0.9$ for the runtime predictor and around $0.98$ for the power predictor, its performance is very respectable. The XGBoost predictor shows marginally better performance to the random forest one, but the results are very close.
@@ -153,17 +185,37 @@ Given the very similar results, both in these metrics and in the visual interpre
 \hline
 CV $\overline{R^2}_{time}$ & $0.890 \pm 0.66$ &  $0.898 \pm 0.05$ \\
 \hline
-Test Set $R^2_{time}$ & $0.8827$ & $0.8924$ \\
+Test Set $R^2_{time}$ & $0.88$ & $0.89$ \\
 \hline
 CV $\overline{R^2}_{power}$ & $0.981 \pm 0.003$  &  $0.988 \pm 0.002$\\
 \hline
-Test Set $R^2_{power}$ & $0.9853$ & $0.9895$ \\
+Test Set $R^2_{power}$ & $0.99$ & $0.99$ \\
 \hline
 \end{tabular}
-\caption{Our inference predictor for the A30 does very well. With runtime scores just below $0.9$ and power scores higher than $0.98$, it is performs just as well as the A30 training predictor. }
+\caption{Operations level results for the random forest and XGBoost A30 predictors. Both cross validation and test set scores are stable across both regressors.}
+% \caption{Our inference predictor for the A30 works very well. With runtime scores just below $0.9$ and power scores as high as $0.99$, it is performs very similar to the A30 training predictor. }
 \label{tab:pred_res_inf}
 \end{table}
 
+
+% \begin{table}[h!]
+% \centering
+% \begin{tabular}{|c|c|c|}
+% \hline
+%  \textbf{Inference A30}& \textbf{Random Forest} & \textbf{XGBoost} \\
+% \hline
+% CV $\overline{R^2}_{time}$ & $0.890 \pm 0.66$ &  $0.898 \pm 0.05$ \\
+% \hline
+% Test Set $R^2_{time}$ & $0.8827$ & $0.8924$ \\
+% \hline
+% CV $\overline{R^2}_{power}$ & $0.981 \pm 0.003$  &  $0.988 \pm 0.002$\\
+% \hline
+% Test Set $R^2_{power}$ & $0.9853$ & $0.9895$ \\
+% \hline
+% \end{tabular}
+% \caption{Our inference predictor for the A30 does very well. With runtime scores just below $0.9$ and power scores higher than $0.98$, it is performs just as well as the A30 training predictor. }
+% \label{tab:pred_res_inf}
+% \end{table}
 
 
 \begin{figure}[htbp]
@@ -188,14 +240,19 @@ In comparison, the A30 datasets are six times as large, because they cover six d
 \hline
 CV $\overline{R^2}_{time}$ & $0.755 \pm 0.122$ &  $0.684 \pm 0.359$ \\
 \hline
-Test Set $R^2_{time}$ & $0.813$ & $0.793$ \\
+Test Set $R^2_{time}$ & $0.81$ & $0.79$ \\
 \hline
 CV $\overline{R^2}_{power}$ & $0.920 \pm 0.058$  &  $0.921 \pm 0.054$\\
 \hline
-Test Set $R^2_{power}$ & $0.866$ & $0.869$ \\
+Test Set $R^2_{power}$ & $0.87$ & $0.87$ \\
 \hline
 \end{tabular}
 \caption{The training predictor for the 2080TI scores notably lower than the A30 predictors. It also reverses the A30 predictor trend of the XGBoost models performing slightly better. For the 2080TI predictors, XGBoost performs a little worse. The smaller training set due to the lack of a clock speed study for the A30 and the smaller focus on consistency of a consumer GPU compared to the A30 might contribute to the weaker predictor performance here. It results in a runtime score of over $0.75$ and a power score of around $0.9$.}
+
+
+
+
+
 \label{tab:pred_res_2080}
 \end{table}
 
@@ -212,11 +269,11 @@ The resulting $R^2$ scores for our 2080TI inference predictor can be seen in tab
 \hline
 CV $\overline{R^2}_{time}$ & $0.735 \pm 0.088$ &  $0.607 \pm 0.079$ \\
 \hline
-Test Set $R^2_{time}$ & $0.769$ & $0.613$ \\
+Test Set $R^2_{time}$ & $0.77$ & $0.61$ \\
 \hline
 CV $\overline{R^2}_{power}$ & $0.939 \pm 0.034$  &  $0.944 \pm 0.026$\\
 \hline
-Test Set $R^2_{power}$ & $0.908$ & $0.885$ \\
+Test Set $R^2_{power}$ & $0.91$ & $0.86$ \\
 \hline
 \end{tabular}
 \caption{The inference predictor for the 2080TI is our worst performer. It shares the challenges of the 2080TI training predictor, while having to work with a dataset of smaller values, which naturally have larger relative errors. The low scores of the runtime predictors using XGBoost support our decision to use the random forest model going forward. With the random forest predictors, we have a runtime score of $0.73$ and a power score of $0.94$.}
