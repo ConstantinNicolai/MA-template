@@ -31,9 +31,10 @@ However in most cases where a new model architecture is designed or an existing 
 
 \section{Scope}
 
-The intended scope for this thesis is to collect a dataset, validate its usability, use it to perform predictions and evaluate the prediction quality. \\
+We focus our work exclusively on the profiling and prediction of deep neural networks. \\
+The intended scope is to collect a dataset, validate its usability, use it to perform predictions and evaluate the prediction quality. \\
 Practical constraints narrowed our study to the Nvidia RTX 2080 TI and the A30 GPUs and to the models available in the Pytorch Torchvision library\footnote{\url{https://docs.pytorch.org/vision/0.22/}}. \\
-The grid-search approach across the parameters revealed some inherent incompatibilities, such as models too large to fit the GPU memory or benchmarks resulting in prohibitively long runtimes due to edge case parameters combinations. Rather than troubleshooting every edge case, we decided to prioritize more practical configurations and to exclude edge cases of limited practical relevance.
+The grid-search approach across the parameters revealed some inherent incompatibilities, such as models too large to fit the GPU memory or benchmarks resulting in prohibitively long runtimes due to edge case parameters combinations. Rather than troubleshooting every edge case, we decided to prioritize more practical configurations and to exclude those edge cases of limited practical relevance.
 
 \section{Contributions Overview}
 \subsection{Dataset Collection}
@@ -49,3 +50,99 @@ The second contribution presents our prediction model. By aggregating the predic
 The third and final contribution consists of two major sections.\\
 The first one investigates the quality of our collected dataset of individual operations. The compositional validity of the dataset is confirmed by comparing the aggregation of the individual operations which compose a neural network against measurements of the full neural network. \\
 The second section assesses the performance of our prediction model both for individual operations and for full neural networks. 
+
+
+
+
+
+
+
+
+
+
+
+
+
+% \begin{tikzpicture}[node distance=2cm]
+%   % Define nodes with shapes and text
+%   \node[rectangle, draw, fill=blue!20] (start) {Start};
+%   \node[diamond, draw, fill=red!20] (decision) [below of=start] {Decision};
+%   \node[circle, draw, fill=green!20] (process) [right of=decision] {Process};
+%   \node[rectangle, draw, fill=blue!20] (end) [below of=process] {End};
+
+%   % Draw arrows between nodes
+%   \draw[-latex] (start) -- (decision);
+%   \draw[-latex] (decision) -- (process);
+%   \draw[-latex] (process) -- (end);
+
+%   % Add additional shapes and text as needed
+%   \node[rectangle, draw, fill=yellow!20, , right of=ellipse1, text width=5.5cm] (loop) [above of=start] {Model A {\tiny(batch size, channels, height, width)}  $\triangle$ $\circ$ $\triangle$ $\triangle$ $\circ$ $\triangle$ $\circ$ $\circ$ $\diamond$ $\square$  $\star$ $\diamond$ $\square$  };
+%   \draw[-latex] (start) -- (loop);
+% \end{tikzpicture}
+
+
+% \usetikzlibrary{shapes,arrows}
+% \usetikzlibrary{shapes.misc}
+% \usetikzlibrary{decorations.pathreplacing}
+
+% \begin{tikzpicture}[node distance=2cm]
+%     \node[rectangle, draw, fill=yellow!20, text width=5.5cm] (ellipse1) {Model A {\tiny(batch size, channels, height, width)}  $\triangle$ $\circ$ $\triangle$ $\triangle$ $\circ$ $\triangle$ $\circ$ $\circ$ $\diamond$ $\square$  $\star$ $\diamond$ $\square$  };
+  
+%   \node[rectangle, draw, fill=yellow!20, right of=ellipse1, node distance=6cm, text width=5.5cm] (ellipse2) {Model B {\tiny(batch size, channels, height, width)}  $\triangle$ $\circ$ $\triangle $ $\triangle$ $\circ $ $\triangle$ $\circ$ $\circ$ $\diamond$ $\square$  $\star$ $\diamond$ $\square $  };
+
+%   \node[ellipse, draw, fill=blue!20] (opex) [below of=ellipse1, node distance=2cm] {\small Operations Extractor};
+
+%   \node[rectangle, draw, fill=blue!20] (stage1) [right of = opex, node distance=6cm] {A: $3\triangle$,$ 4\circ$, $1\triangle$; B: $2\triangle$,$1\circ$,$3\triangle$};
+
+
+%   \node[ellipse, draw, fill=blue!20] (whitelist) [below of=opex, node distance=2cm] {\small Whitelist};
+
+%   \node[rectangle, draw, fill=blue!20] (stage2) [right of = whitelist, node distance=6cm] {A: $3\triangle$,$ 4\circ$, $1\triangle$ B: $2\triangle$,$1\circ$,$3\triangle$};
+
+%   \node[diamond, draw, fill=blue!20] (unique) [below of=whitelist, node distance=2cm] {Unique Operations};
+
+
+%   \node[rectangle, draw, fill=blue!20] (benchset) [right of = unique, node distance=6cm] {$\circ$ $\triangle$ $\diamond$};
+
+%   \node[ellipse, draw, fill=blue!20] (bench) [below of=unique, node distance=2cm] {Benchmark};
+
+
+%   \node[rounded rectangle, draw, fill=blue!20] (proc1) [right of = bench, node distance=6cm] {$\triangle$ warmup runs};
+
+%   \node[rounded rectangle, draw, fill=blue!20] (proc) [below of = proc1, node distance=1.5cm] {$\triangle$ profiling iterations};
+  
+%   % \draw[decorate,decoration={brace,mirror}] (proc.north east) -- (proc.south east) node[midway,xshift=3cm]{\small nvidia-smi power logging};
+
+%   \node[right of = proc, node distance = 4.25cm] {$\Big\}$\small background power logging};
+
+%   \node[diamond, draw, fill=blue!20] (dataset) [below of=bench, node distance=2cm] {Dataset};
+
+%   \node[ellipse, draw, fill=blue!20] (val) [below of=dataset, node distance=2cm] {Validation};
+
+%   \node[rectangle, draw, fill=blue!20] (sum) [right of = val, node distance=6cm] {time(Model A) = $\sum \text{time}(\triangle \triangle \triangle \circ \circ \circ \circ \square )$};
+
+%   % Define other nodes with shapes and text
+% %   \node[rectangle, draw, fill=blue!20] (start) [below of=ellipse1, node distance=3cm] {Start};
+% %   \node[diamond, draw, fill=red!20] (decision) [below of=start] {Decision};
+% %   \node[circle, draw, fill=green!20] (process) [right of=decision] {Process};
+% %   \node[rectangle, draw, fill=blue!20] (end) [below of=process] {End};
+
+%   % Draw arrows between nodes
+%   \draw[-latex] (ellipse1) -- (opex);
+%   \draw[-latex] (ellipse2) -- (opex);
+%   \draw[-latex] (opex) -- (stage1);
+%   \draw[-latex] (opex) -- (whitelist);
+%   \draw[-latex] (whitelist) -- (stage2);
+%   \draw[-latex] (whitelist) -- (unique);
+%   \draw[-latex] (unique) -- (benchset);
+%   \draw[-latex] (unique) -- (bench);
+%   \draw[-latex] (bench) -- (proc1);
+%   \draw[-latex] (proc1) -- (proc);
+%   \draw[-latex] (bench) -- (dataset);
+%   \draw[-latex] (dataset) -- (val);
+%   \draw[-latex] (val) -- (sum);
+
+% \end{tikzpicture}
+
+
+

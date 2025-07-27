@@ -1,16 +1,46 @@
 \chapter{Background}\label{chap:background}
 
+% \begin{itemize}
+%     % \item MSE intro/def 
+%     \item what is meant by dividing the input space 
+%     \item what is an ensemble method 
+%     \item random forest is a tree based ensemble method
+% \end{itemize}
+
+
+
+\section{Graphics Processing Unit}
+A graphics processing unit (GPU) is a massively parallel accelerator which prioritizes throughput over latency in its architectural design. Compared to a CPU which is optimized for low latency in order to ensure a responsive user  experience, a GPU is designed to excel at massively parallel workloads. \\
+When optimizing for throughput, there are two avenues towards increasing it, increasing the frequency and increasing the number of cores. By deprioritizing latency, GPU design is able to exploit the following relationship:
+\begin{equation}
+    P \propto \frac{1}{2} C V^2 f
+\end{equation}
+Where $P$ is the power, $C$ is the capacitative load, $V$ is the voltage and $f$ is the frequency \cite{hennessy2017computer}. \\
+The weaker frequency requirements on the GPU allow for an optimization towards lower voltages, minimizing the impact of the quadratic power scaling. \\
+This design philosophy is the foundational reason why GPUs have orders of magnitude more cores than CPUs, making them the perfect fit for the massively parallel matrix operations in DNN training and inference workloads.
+
+
+
+% When optimizing for throughput, there are however two avenues towards increasing it. Increasing the frequency increases throughput. However, increasing the number of processing units also increases throughput. Decreasing latency necessitates increasing frequency, which in turn necessitates increasing voltage. However, since throughput can be scaled by increasing parallelisation, this frees the design requirements from having to increase the frequence and instead allows it to optimize of a sweet spot of moderate frequency at relatively low voltage, avoiding the expensive quadratic voltage scaling. \\
+% This relationship and design philosophy are the reason why CPUs tend to have single digits to tens of cores, while GPUs have thousands of cores. 
+
+
 
 
 
 \section{Random Forest Regressor}
 
-In order to introduce the workings of a random forest regressor model, we first need define to a number of foundational concepts: regression, decision trees, bootstrapping and bagging. On this basis, we can describe the concept of a random forest. \\
-Regression is a supervised learning technique approximating a function to a continuous target variable from a set of input output pairs. In the case of random forests, this function is learned by minimizing the mean squared error over an ensemble of decision trees \citep{hastie_elements_2009}[p. 10]. \\
-A decision tree is a predictor which divides up the input space in order to provide specific predictions for each region. In the tree, at each decision node one feature and a corresponding threshold are chosen to split the input space into two regions. This feature and threshold are chosen by considering all features and many thresholds and identifying the lowest MSE combination. At each leaf node, a prediction value is assigned based on the data points within that region \citep{hastie_elements_2009}[p. 307]. \\
-Bootstrapping describes the process of sampling with replacement from the training dataset. For each tree in the ensemble, a new training subset is created by randomly sampling data points from the full training dataset, explicitly allowing for duplicates. This results in each tree being trained on a slightly different subset of the training dataset, while preserving the overall data distribution across the ensemble of trees. \\
+In order to introduce the workings of a random forest regressor model, we first need to define a number of foundational concepts: regression, decision trees, bootstrapping and bagging. On this basis, we can describe the concept of a random forest. \\
+Regression is a supervised learning technique approximating a function to a continuous target variable from a set of input output pairs. In the case of random forests, this function is learned by minimizing the mean squared error over an ensemble of decision trees \citep{hastie_elements_2009}[p. 10]. The MSE is an error metric calculated from the squared distance between prediction and true value.
+\begin{equation}
+    \text{MSE}(y,\hat{y}) = \frac{1}{n} \sum_{i=0}^{n-1} (y_i - \hat{y}_i)^2
+    \label{eq:mse}
+\end{equation}
+With $n$ the number of samples, $\hat{y}_i$ the predicted value of the $i$-th sample and $y_i$ the corresponding true value \cite{noauthor_34_nodate}. \\
+A decision tree is a predictor which recursively partitions the input feature space in order to provide specific predictions for each region. In the tree, at each decision node one feature and a corresponding threshold are chosen to split the current input feature space into two regions. This feature and threshold are chosen by considering all features and many thresholds and identifying the lowest MSE combination. At each leaf node, a prediction value is assigned based on the data points within that region \citep{hastie_elements_2009}[p. 307]. \\
+Bootstrapping describes the process of sampling with replacement from the training dataset. For each tree in an ensemble, a new training subset is created by randomly sampling data points from the full training dataset, explicitly allowing for duplicates. This results in each tree being trained on a slightly different subset of the training dataset, while preserving the overall data distribution across the ensemble of trees. \\
 The ensemble technique of aggregating the results from the independently trained trees is called bagging. For regression tasks, the individual predictions are averaged, which serves to reduce model variance and improve robustness across the ensemble. \\
-The only step necessary to move from standard bagging to a random forest model, is to adapt the process of building the decision trees. Instead of considering all features at every decision node, in a random forest only a smaller random subset of features is considered at each node. Introducing randomness within the building of the trees increases variety between the trees. This reduced correlation between individual trees is the core improvement over the standard bagging approach. The individual trees being more independent results in reduced variance in the average across the ensemble \citep{hastie_elements_2009}[p. 588]. \\
+Similar to the bagging approach, a random forest is an ensemble of trees. The only step necessary to move from standard bagging to a random forest model, is to adapt the process of building the decision trees. Instead of considering all features at every decision node, in a random forest only a smaller random subset of features is considered at each node. Introducing randomness within the building of the trees increases variety between the trees. This reduced correlation between individual trees is the core improvement over the standard bagging approach. The individual trees being more independent results in reduced variance in the average across the ensemble \citep{hastie_elements_2009}[p. 588]. \\
 The twofold introduction of randomness through bootstrapping and the random forest approach is the key to the overall strengths of the random forest model in strong robustness, little overfitting and good generalization.
 
 
@@ -31,9 +61,9 @@ One improvement is its inclusion of regularization. It uses a leaf weight penalt
 
 The coefficient of determination, denoted as $R^2$, is a statistical measure used to evaluate the performance of regression models. It measures the proportion of the variance in the dependent variable that is predictable from the independent variables. 
 \begin{equation}
-R^2 = 1 - \frac{\sum_{i=1}^n (y_i - \hat{y}_i)^2}{\sum_{i=1}^n (y_i - \bar{y})^2}
+R^2(y, \hat{y}) = 1 - \frac{\sum_{i=1}^n (y_i - \hat{y}_i)^2}{\sum_{i=1}^n (y_i - \bar{y})^2}
 \end{equation}
-where $y_i$ are the observed values, $\hat{y}_i$ are the predicted values and $\bar{y}$ is the mean of the observed values. \\
+where $y_i$ are the observed values, $\hat{y}_i$ are the predicted values and $\bar{y}$ is the mean of the observed values \cite{noauthor_34_nodate-1}. \\
 An $R^2$ score of $1$ indicates perfect predictions. A score of $0$ indicates the predictor performs equally to predicting the mean of the training target values. If the model performs worse than predicting the mean, the score ranges below $0$. \\
 Before the training process of any model begins, the dataset is split into a training set and a test set. The test set is held out for the final evaluation of the predictive performance on unseen data.
 

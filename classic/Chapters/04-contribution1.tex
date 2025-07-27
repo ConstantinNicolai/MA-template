@@ -17,6 +17,86 @@ Before profiling, the set of all operations occurring in any of these model-inpu
 
 \section{Time Profiling}
 
+\usetikzlibrary{shapes,arrows}
+\usetikzlibrary{shapes.misc}
+\usetikzlibrary{decorations.pathreplacing}
+
+\begin{figure}[h!]
+\centering
+
+\begin{tikzpicture}[node distance=2cm]
+    \node[rectangle, draw, fill=yellow!20, text width=5.5cm] (ellipse1) {Model A {\tiny(batch size, channels, height, width)}  $\triangle$ $\star$ $\circ$ $\square$ $\triangle$  $\circ$  $\star$ $\triangle$ $\circ$ $\circ$ $\star$  $\square$  $\star$};
+  
+  \node[rectangle, draw, fill=yellow!20, right of=ellipse1, node distance=6cm, text width=5.5cm] (ellipse2) {Model B {\tiny(batch size, channels, height, width)}  $\square$ $\circ$ $\triangle$  $\diamond$ $\diamond$ $\circ$ $\triangle$  $\square$ $\square$  $\diamond$ $\diamond$ $\circ$ $\triangle$  $\square$};
+
+  \node[ellipse, draw, fill=blue!20] (opex) [below of=ellipse1, node distance=2cm] {\small Operations Extractor};
+
+  \node[rectangle, draw, fill=blue!20] (stage2) [right of = opex, node distance=6cm] {A: $3\triangle, 2\square, 4\star, 4\circ$};
+
+  \node[rectangle, draw, fill=blue!20] (stage1) [below of = stage2, node distance=1cm] {B: $3\triangle, 4\square, 4\diamond, 3\circ$};
+
+
+
+  \node[ellipse, draw, fill=blue!20] (whitelist) [below of=opex, node distance=2cm] {\small Whitelist};
+
+  \node[rectangle, draw, fill=blue!20] (stage3) [right of = whitelist, node distance=6cm] {A: $3\triangle, 2\square, 4\circ$};
+
+  \node[rectangle, draw, fill=blue!20] (stage4) [below of = stage3, node distance=1cm] {B: $3\triangle, 4\square, 3\circ$};
+
+  \node[diamond, draw, fill=blue!20] (unique) [below of=whitelist, node distance=3cm] {{\footnotesize Unique Ops}};
+
+  \node[rectangle, draw, fill=blue!20] (benchset) [right of = unique, node distance=6cm] {$\triangle$ $\square$ $\circ$};
+
+  \node[ellipse, draw, fill=blue!20] (bench) [below of=unique, node distance=2cm] {Benchmark};
+
+
+  \node[rounded rectangle, draw, fill=blue!20] (proc1) [right of = bench, node distance=6cm] {warmup runs};
+
+  \node[rounded rectangle, draw, fill=blue!20] (proc) [below of = proc1, node distance=1.5cm] {profiling iterations};
+  
+  % \draw[decorate,decoration={brace,mirror}] (proc.north east) -- (proc.south east) node[midway,xshift=3cm]{\small nvidia-smi power logging};
+
+  \node[right of = proc, node distance = 3.5cm] {$\Big\}${\small power logging}};
+
+  \node[diamond, draw, fill=blue!20] (dataset) [below of=bench, node distance=3cm] {Dataset};
+
+  \node[ellipse, draw, fill=blue!20] (val) [below of=dataset, node distance=2cm] {Validation};
+
+  \node[rectangle, draw, fill=blue!20] (sum) [right of = val, node distance=6cm] {time(Model A) $\approx \sum \text{time}(\triangle \triangle \triangle \circ \circ \circ \circ \square )$};
+
+  % Define other nodes with shapes and text
+%   \node[rectangle, draw, fill=blue!20] (start) [below of=ellipse1, node distance=3cm] {Start};
+%   \node[diamond, draw, fill=red!20] (decision) [below of=start] {Decision};
+%   \node[circle, draw, fill=green!20] (process) [right of=decision] {Process};
+%   \node[rectangle, draw, fill=blue!20] (end) [below of=process] {End};
+
+  % Draw arrows between nodes
+  \draw[-latex] (ellipse1) -- (opex);
+  \draw[-latex] (ellipse2) -- (opex);
+  \draw[-latex] (opex) -- (stage1);
+  \draw[-latex] (opex) -- (stage2);
+  \draw[-latex] (opex) -- (whitelist);
+  \draw[-latex] (whitelist) -- (stage3);
+  \draw[-latex] (whitelist) -- (stage4);
+  \draw[-latex] (whitelist) -- (unique);
+  \draw[-latex] (unique) -- (benchset);
+  \draw[-latex] (unique) -- (bench);
+  \draw[-latex] (bench) -- (proc1);
+  \draw[-latex] (proc1) -- (proc);
+  \draw[-latex] (bench) -- (dataset);
+  \draw[-latex] (dataset) -- (val);
+  \draw[-latex] (val) -- (sum);
+
+
+
+\end{tikzpicture}
+
+\caption{Example models A and B illustrate the workflow. Operations within each model are represented as shapes. The Operations Extractor tracks each operation and its occurrence count in per model lists. The whitelist removes operations of negligible computational impact. From these lists, a global set of unique operations is created and then profiled in the Benchmark. Validation uses the per model lists to ensure aggregated times reflect full model execution.}
+\label{fig:tikzexample}
+\end{figure}
+
+\vspace{1cm}
+
 \input{Plots/runtime.tex}
 
 The time profiling is performed using the benchmark utility from \texttt{torch.utils.benchmark} called Timer. This enables us to run our benchmark function with specific layers and input features as input parameters, allowing us to run it for individual operations. \\
@@ -121,3 +201,4 @@ The most interesting results here are the time and energy per iteration with the
 
 \section{GPU Clocks}
 The last parameter we needed to build a test methodology for is the GPU core clock. A dedicated clocking script\footnote{Because using \texttt{nvidia-smi} to change the clock requires lower level permissions, this was done in a separate script with additional permissions, which was then called from the \texttt{sbatch} script used to run the benchmark.} takes command line parameters to set the desired clock speed. A range of clock speeds was tested in order to gain insight into the relationships between clock speed, runtime and energy consumption.
+
