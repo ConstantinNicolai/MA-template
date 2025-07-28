@@ -39,7 +39,7 @@ This leaves us with three configurations for the dataset validation. The 2080TI 
 \subsection{Uncertainties}
 The standard deviation in our results is very small, both for the summation and for the measurements. It is clear that the discrepancies between the two cannot be solely caused by statistical noise. Systematic uncertainties are the larger contributor which dominates the remaining statistical noise in our measurements. For this reason, statistical errors are omitted in the evaluations following the dataset validation. The wide range of potential systematic sources makes the identification of specific systematic contributors very difficult. Since that was not required for the performance assessment of our predictor models it was not the focus of this project. 
 
-% and was not the focus of this project. The prediction performance evalutation 
+% and was not the focus of this project. The prediction performance evaluation 
 
 
 %  The specific systematic contributors were not able to be identified, because the wide range of potential sources made this task very difficult.
@@ -89,7 +89,7 @@ We begin our evaluation of the prediction performance by evaluating our predicti
 We are using the implementations from the \texttt{sklearn} and \texttt{xgboost} libraries and have investigated XGBRegressor\footnote{\href{https://xgboost.readthedocs.io/en/latest/python/index.html}{xgboost XGBRegressor} }, ExtraTreesRegressor\footnote{\href{https://scikit-learn.org/stable/modules/generated/sklearn.ensemble.ExtraTreesRegressor.html}{sklearn Extra Trees Regressor} } and RandomForestRegressor\footnote{\href{https://scikit-learn.org/stable/modules/generated/sklearn.ensemble.RandomForestRegressor.html}{sklearn Random Forest Regressor} } for use as our prediction model. Initial tests showed clearly that ExtraTreesRegressor performed worse than the others in terms of predictive power, so we focused on the other two. \\
 We chose to use the coefficient of determination ($R^2$, \ref{R2}) as our metric to evaluate the prediction accuracy. \\
 In order to provide a more well rounded representation, both the $R^2$ score for a test set separate from the training set, as well as the mean $R^2$ score for a 15 fold cross-validation are given. \\
-The inference and training datasets are conceptually separate and measured independently. Therefore, the prediction models and their evaluation are seperate as well.
+The inference and training datasets are conceptually separate and measured independently. Therefore, the prediction models and their evaluation are separate as well.
 
 
 % therefore the prediction models are separate as well. Naturally, their evaluation is split up too.
@@ -421,7 +421,7 @@ The fact that the highest clock speeds are not the most efficient choice is expl
 \begin{equation}
     P \propto \frac{1}{2} C V^2 f
 \end{equation}
-Where $P$ is the power, $C$ is the capacitative load, $V$ is the voltage and $f$ is the frequency. \\
+Where $P$ is the power, $C$ is the capacitive load, $V$ is the voltage and $f$ is the frequency. \\
 For a whole GPU this is scaled by its number of transistors, but the proportionality remains intact. In order to maintain stability at the highest clock speed settings, it is necessary to increase the voltage. The squared contribution of the voltage towards the power consumption makes it very sensitive to larger voltages. This is the reason why the highest achievable clock speed is rarely the most efficient one. \\
 We do however observe high energy costs for low clock speeds as well. This is where another effect comes into play. Every GPU has an idle power consumption that is independent of the current workload. At very low clock speeds, a GPU takes much longer to complete its task, resulting in a larger share of the energy usage being caused by its idle power. \\
 These two counteracting effects result in the energy optimum lying at neither extreme. So even if a future DNN had a slightly different optimum, the optimum we found here would still be a good starting point when optimizing for energy efficiency.\\
